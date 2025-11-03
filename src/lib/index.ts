@@ -3,10 +3,6 @@ import { isValIden, PRETTY_STR_MAP } from "./labels/index.js";
 import type { Compute } from "./internal/types.js";
 import * as IsIndividual from "./is/individual/index.js";
 
-/**
- * TODO: am I exporting "GET_IS_IDEN"? the Type? cuz I do not want to
- */
-
 export * from "./is/index.js"
 export * from "./assert/index.js"
 export * from "./instanceOf/index.js";

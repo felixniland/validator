@@ -24,11 +24,13 @@ function toTitleCase(str: string): string {
     return complexToTitleCase(str);
 }
 
-function complexToTitleCase(str: string): string { // TODO: upgrade it to not split at consecutive uppercase letters, e.g., 
+function complexToTitleCase(str: string): string {
     if (!str) return str;
 
-    // handle kebab-case and snake_case
-    if (str.includes('-') || str.includes('_')) {
+    if (
+        str.includes('-') // kebab
+        || str.includes('_') // snek
+    ) {
         return str
             .split(/[-_]/)
             // .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -37,10 +39,10 @@ function complexToTitleCase(str: string): string { // TODO: upgrade it to not sp
     
     // handle camel && pascal
     const words = str
-        .replace(/([a-z0-9])([A-Z])/g, '$1 $2') // Also split at uppercase to uppercase transitions when followed by lowercase
+        .replace(/([a-z0-9])([A-Z])/g, '$1 $2') // split at uppercase to uppercase transitions when followed by lowercase
         .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
     
-    return words // Capitalize the first letter of each word
+    return words
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
