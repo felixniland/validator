@@ -1,16 +1,11 @@
 export type {
-    DateStr,
-    Digit,
-    DigitStr,
-    FiniteNumber,
-    BoolNum,
     FnInOut,
-    ContentEditableElement,
     Compute,
     Constructor,
     NonEmptyArr,
     ToStr,
-    NumKey,
+    MakeBrandedType,
+
     // obj validator stuff
         // PropKeysOnly,
         // NarrowProp,
@@ -44,19 +39,6 @@ type NonEmptyArr<T> = MutNonEmptyArr<T> | ReadonlyNonEmptyArr<T>;
 type Constructor<T> = new (...args: Array<any>) => T;
 
 type Compute<T> = T extends PrimitiveBase ? T : { [K in keyof T]: T[K] } & {}; // Forces TypeScript to compute and show a flattened object type, instead of leaving intersections (`&`) in the type signature. Essentially a shallow "Prettify" (I think - haven't tested thorougly)
-
-type ContentEditableElement = Omit<HTMLElement, "contenteditable"> & {
-	isContentEditable: true;
-}
-
-type FiniteNumber = MakeBrandedType<number, "FiniteNumber">;
-
-type Digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-type DigitStr = MakeBrandedType<NumKey, "DigitStr">;
-type NumKey = `${Digit}`; // i.e., unbranded DigitStr
-type DateStr = MakeBrandedType<string, "DateStr">;
-
-type BoolNum = 0 | 1;
 
 type FnInOut<In, Out, S extends SyncArgs = "sync"> =
 	S extends "sync"

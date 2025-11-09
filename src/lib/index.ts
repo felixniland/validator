@@ -8,6 +8,7 @@ export * from "./assert/index.js"
 export * from "./instanceOf/index.js";
 export * from "./str/index.js";
 export * from "./kb/index.js";
+export * from "./types/index.js";
 export { isValIden, PRETTY_STR_MAP } from "./labels/index.js";
 
 export {

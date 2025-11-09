@@ -4,7 +4,7 @@ import type { NonEmptyArr } from "$lib/internal/types.js";
 
 /**
  * TODO:
-    * []: a version that returns a brandedType
+    * []: a version that returns a brandedType, as otherwise feels stupid to allow validator props (even the current case-insensitivity is...irksome)
  */
 
 export {

@@ -25,6 +25,12 @@ export {
     isFormEl,
     isHtmlEl,
     isInputEl,
+    isUL,
+    isOL,
+    isListEl,
+    isBlockEl,
+    isListItem,
+    
     isMap,
     isNode,
     isNull,

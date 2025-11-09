@@ -61,4 +61,9 @@ const PRETTY_STR_MAP = {
 	node: "Node",
 	svelteMap: "SvelteMap",
 	svelteSet: "SvelteSet",
+    ul: "Unordered List Element",
+    ol: "Ordered List Element",
+    listEl: "(UL/OL) List Element",
+    listItem: "HTML LI Element",
+    blockEl: "Block Element",
 } as const;

@@ -1,4 +1,5 @@
-import type { Digit, ToStr } from "$lib/internal/types.js";
+import type { ToStr } from "$lib/internal/types.js";
+import type { Digit } from "$lib/types/index.js";
 
 export type {
 	KeyStr,

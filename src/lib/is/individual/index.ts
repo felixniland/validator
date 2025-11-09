@@ -1,11 +1,13 @@
 import { SvelteMap, SvelteSet } from "svelte/reactivity";
 import { isComparableNumber } from "../../internal/index.js";
 import * as IsIndividual from "./index.js";
-import type { ValIden } from "$lib/index.js";
-import type { FiniteNumber, FnInOut, DigitStr, BoolNum, DateStr, ContentEditableElement } from "$lib/internal/types.js";
+import type { HTMLListElement, ValIden } from "$lib/index.js";
+import type { FnInOut } from "$lib/internal/types.js";
+import type { FiniteNumber, DigitStr, BoolNum, DateStr, ContentEditableElement } from "$lib/types/index.js";
 
 export const getIsValidator = <I extends ValIden>(val: I) => IsIndividual[GET_IS_IDEN[val]];
 
+/** documentation test on isStr */
 export const isStr = (val: unknown): val is string => typeof val === "string";
 export const isNum = (val: unknown): val is number => typeof val === "number";
 export const isCompNum = (val: unknown): val is FiniteNumber => isComparableNumber(val); // Assumes NumValidator exists
@@ -47,6 +49,15 @@ export const isFormEl = (val: unknown): val is HTMLFormElement => val instanceof
 export const isInputEl = (val: unknown): val is HTMLInputElement => val instanceof HTMLInputElement;
 export const isContentEditable = (val: unknown): val is ContentEditableElement => val instanceof HTMLElement && val.isContentEditable;
 export const isNode = (val: unknown): val is Node => val instanceof Node;
+export const isUL = (val: unknown): val is HTMLUListElement => isElement(val) && val.tagName === "UL";
+export const isOL = (val: unknown): val is HTMLUListElement => isElement(val) && val.tagName === "OL";
+export const isListEl = (val: unknown): val is HTMLListElement => isUL(val) || isOL(val);
+export const isBlockEl = (val: unknown): val is HTMLElement => {
+	if (!isHtmlEl(val)) return false;
+	// TODO: this list is not exhaustive, and also does not take into account "display: block", and so on
+	return (['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'DIV', 'BLOCKQUOTE', 'LI']).includes(val.tagName);
+};
+export const isListItem = (val: unknown): val is HTMLLIElement => isElement(val) && val.tagName === "LI";
 
 export const isError = (val: unknown): val is Error => val instanceof Error;
 export const isRegExp = (val: unknown): val is RegExp => val instanceof RegExp;
@@ -99,6 +110,11 @@ const GET_IS_IDEN = {
     undef: "isUndef",
     weakMap: "isWeakMap",
     weakSet: "isWeakSet",
+    ul: "isUL",
+    ol: "isOL",
+    listEl: "isListEl",
+    blockEl: "isBlockEl",
+    listItem: "isListItem",
 } as const satisfies Record<ValIden, IsKey>;
 
 export type GET_IS_IDEN = typeof GET_IS_IDEN;
