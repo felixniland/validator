@@ -37,6 +37,12 @@ export const assertFormEl: Asserter<"formEl"> = getStdAsserter("formEl");
 export const assertInputEl: Asserter<"inputEl"> = getStdAsserter("inputEl");
 export const assertContentEditable: Asserter<"contentEditable"> = getStdAsserter("contentEditable");
 export const assertNode: Asserter<"node"> = getStdAsserter("node");
+export const assertUL: Asserter<"ul"> = getStdAsserter("ul");
+export const assertOL: Asserter<"ul"> = getStdAsserter("ol");
+export const assertListEl: Asserter<"listEl"> = getStdAsserter("listEl");
+export const assertBlockEl: Asserter<"blockEl"> = getStdAsserter("blockEl");
+export const assertHeadingEl: Asserter<"headingEl"> = getStdAsserter("headingEl");
+export const assertListItem: Asserter<"listItem"> = getStdAsserter("listItem");
 
 export const assertError: Asserter<"err"> = getStdAsserter("err");
 export const assertRegExp: Asserter<"regExp"> = getStdAsserter("regExp");

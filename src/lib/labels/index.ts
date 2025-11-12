@@ -66,4 +66,5 @@ const PRETTY_STR_MAP = {
     listEl: "(UL/OL) List Element",
     listItem: "HTML LI Element",
     blockEl: "Block Element",
+    headingEl: "Heading Element",
 } as const;

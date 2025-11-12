@@ -57,6 +57,11 @@ export const isBlockEl = (val: unknown): val is HTMLElement => {
 	// TODO: this list is not exhaustive, and also does not take into account "display: block", and so on
 	return (['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'DIV', 'BLOCKQUOTE', 'LI']).includes(val.tagName);
 };
+export const isHeadingEl = (val: unknown): val is HTMLHeadingElement => {
+	if (!isHtmlEl(val)) return false;
+	// TODO: this list is not exhaustive, and also does not take into account "display: block", and so on
+	return (['H1', 'H2', 'H3', 'H4', 'H5', 'H6']).includes(val.tagName);
+};
 export const isListItem = (val: unknown): val is HTMLLIElement => isElement(val) && val.tagName === "LI";
 
 export const isError = (val: unknown): val is Error => val instanceof Error;
@@ -115,6 +120,7 @@ const GET_IS_IDEN = {
     listEl: "isListEl",
     blockEl: "isBlockEl",
     listItem: "isListItem",
+    headingEl: "isHeadingEl",
 } as const satisfies Record<ValIden, IsKey>;
 
 export type GET_IS_IDEN = typeof GET_IS_IDEN;
