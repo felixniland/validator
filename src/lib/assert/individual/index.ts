@@ -22,7 +22,7 @@ export const assertBoolNum: Asserter<"boolNum"> = getStdAsserter("boolNum");
 export const assertDateStr: Asserter<"dateStr"> = getStdAsserter("dateStr");
 
 export const assertArrStr: Asserter<"arrStr"> = getStdAsserter("arrStr");
-export const assertArrNum: Asserter<"arrNum"> = getStdAsserter("arrNull");
+export const assertArrNum: Asserter<"arrNum"> = getStdAsserter("arrNum");
 export const assertArrBool: Asserter<"arrBool"> = getStdAsserter("arrBool");
 export const assertArrObj: Asserter<"arrObj"> = getStdAsserter("arrObj");
 export const assertArrArr: Asserter<"arrArr"> = getStdAsserter("arrArr");
