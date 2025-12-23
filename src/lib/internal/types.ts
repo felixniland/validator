@@ -55,7 +55,10 @@ type FnInOut<In, Out, S extends SyncArgs = "sync"> =
     type Resolve<T> = T extends ((v: infer _In) => infer Out) ? Resolve<Out> : T;
     type IsAsync<T> = Resolve<T> extends infer Resolved ? Awaited<Resolved> extends Resolved ? false : true : never;
     type IsNotAsync<T> = IsAsync<T> extends true ? never : T;
-    type MakeBrandedType<T, Brand extends string> = T & { readonly __brand: Brand };
+	type MakeBrandedType<T extends PrimitiveBase, Brand extends string> = T & {
+		readonly __brand: Brand;
+		readonly __type: T;
+	};
     type MutNonEmptyArr<T> = [T, ...T[]];
     type ReadonlyNonEmptyArr<T> = readonly [T, ...T[]];
             
