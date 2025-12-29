@@ -5,7 +5,7 @@ export type {
     NonEmptyArr,
     ToStr,
     MakeBrandedType,
-
+    PrimitiveBase,
     // obj validator stuff
         // PropKeysOnly,
         // NarrowProp,
@@ -49,8 +49,9 @@ type FnInOut<In, Out, S extends SyncArgs = "sync"> =
 		? (val: In) => (Out | Promise<Out>)
 	: never;
 
-// SUPPORTERS - DO NOT EXPORT
     type PrimitiveBase = string | number | boolean | bigint | symbol | null | undefined;
+
+// SUPPORTERS - DO NOT EXPORT
     type SyncArgs = "sync" | "async" | "either";
     type Resolve<T> = T extends ((v: infer _In) => infer Out) ? Resolve<Out> : T;
     type IsAsync<T> = Resolve<T> extends infer Resolved ? Awaited<Resolved> extends Resolved ? false : true : never;

@@ -1,4 +1,4 @@
-import type { MakeBrandedType } from "$lib/internal/types.js";
+import type { MakeBrandedType, PrimitiveBase } from "$lib/internal/types.js";
 
 export type {
     FiniteNumber,
@@ -9,9 +9,11 @@ export type {
     BoolNum,
     ContentEditableElement,
     HTMLListElement,
+    AllowsDirectComparison,
 }
 
 type FiniteNumber = MakeBrandedType<number, "FiniteNumber">;
+type AllowsDirectComparison = Exclude<PrimitiveBase, number> | FiniteNumber;
 type Digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 type DigitStr = MakeBrandedType<NumKey, "DigitStr">;
 type NumKey = `${Digit}`; // i.e., unbranded DigitStr
