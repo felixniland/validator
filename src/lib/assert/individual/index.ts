@@ -71,7 +71,10 @@ export const assertSvelteMap = getStdAsserter("svelteMap");
 /************** MAKING THE ASSERTERS **************/
 
 type GetExpectedMsg<TIden extends ValIden> = ReturnType<typeof getExpectedMsg<TIden>>;
-const getExpectedMsg = <const TIden extends ValIden>(iden: TIden) => `expected ${PRETTY_STR_MAP[iden]}` as const;
+
+function getExpectedMsg<const TIden extends ValIden>(iden: TIden) {
+    return `expected ${PRETTY_STR_MAP[iden]}` as const;
+}
 
 function getStdAsserter<const K extends ValIden>(type: K) {
     type Asserted = InferValidatedType<K>;
