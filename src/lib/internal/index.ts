@@ -1,5 +1,5 @@
-import type { FiniteNumber } from "$lib/internal/types.js";
 import type { KeyStr, ModKey } from "$lib/kb/typesAndConsts.js";
+import type { FiniteNumber } from "$lib/types/index.js";
 
 export {
     toCamelCase,

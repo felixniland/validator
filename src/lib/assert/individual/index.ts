@@ -3,14 +3,6 @@ import { PRETTY_STR_MAP } from "../../labels/index.js";
 import type { InferValidatedType, ValIden } from "../../index.js";
 import type { AutoCompleteStr as DefaultMsg } from "$lib/internal/types.js";
 
-/**
- * Assertion function that throws an error if the value doesn't match the expected type.
- * @param v - The value to assert
- * @param errMsg - Optional custom error message
- * @throws {Error} When validation fails
- */
-export type Asserter<K extends ValIden, TErrMsg extends string = DefaultMsg<GetExpectedMsg<K>>> = (v: unknown, errMsg?: TErrMsg) => asserts v is InferValidatedType<K>
-
 export const assertStr = getStdAsserter("str");
 export const assertNum = getStdAsserter("num");
 export const assertDigitStr = getStdAsserter("digitStr");
@@ -62,12 +54,21 @@ export const assertPromise = getStdAsserter("promise");
 export const assertSvelteSet = getStdAsserter("svelteSet");
 export const assertSvelteMap = getStdAsserter("svelteMap");
 
-/** NOT EXPORTED */
 
-// type AssertKey = keyof Omit<typeof AssertSingle, "getAsserter">;
-// type MakeAssertIden<V extends ValIden> = `assert${Capitalize<V>}` extends AssertKey ? `assert${Capitalize<V>}` : never;
-// const createAssertIden = <V extends ValIden>(l: V): MakeAssertIden<V> => `assert${capitalise(l)}` as any;
-// const getAsserter = <I extends ValIden>(val: I): typeof AssertSingle[MakeAssertIden<I>] => AssertSingle[createAssertIden(val)];
+
+
+
+
+
+
+
+
+
+
+
+
+
+/************** MAKING THE ASSERTERS **************/
 
 type GetExpectedMsg<TIden extends ValIden> = ReturnType<typeof getExpectedMsg<TIden>>;
 const getExpectedMsg = <const TIden extends ValIden>(iden: TIden) => `expected ${PRETTY_STR_MAP[iden]}` as const;
@@ -87,6 +88,8 @@ function getStdAsserter<const K extends ValIden>(type: K) {
     return asserter;
 }
 
+// old "Asserter" type, that I no longer need due to using the overloads // type Asserter<K extends ValIden, TErrMsg extends string = DefaultMsg<GetExpectedMsg<K>>> = (v: unknown, errMsg?: TErrMsg) => asserts v is InferValidatedType<K>
+
 // /** this is the old version of the StdAsserter, which did not allow custom errMsgs... then when I added it, the intellisense was ugly, so I rewrote it as overloaded to keep it handsome */
 // // NOTE: I've copied the Asserter type in manually, as when I used it for the return type, the intellisense on the getStdAsserter's above was "const assertStr: Asserter<"str">"; doing it this way shows the proper function signature
 // function getStdAsserter<const K extends ValIden>(type: K) {
@@ -99,4 +102,4 @@ function getStdAsserter<const K extends ValIden>(type: K) {
     
 //     // ret satisfies Asserter<K, AutoCompleteStr<GetExpectedMsg<K>>>;
 //     return ret as <const TErrMsg extends string = DefaultMsg<GetExpectedMsg<K>>>(v: unknown, errMsg?: TErrMsg) => asserts v is InferValidatedType<K>;
-// }
+// }s

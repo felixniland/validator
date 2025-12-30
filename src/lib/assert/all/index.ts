@@ -1,6 +1,5 @@
 import * as asserters from "../individual/index.js";
 
-// export const ASSERT: Asserters = {
 export const ASSERT = {
     str: asserters.assertStr,
     num: asserters.assertNum,
@@ -42,45 +41,3 @@ export const ASSERT = {
     svelteSet: asserters.assertSvelteSet,
     svelteMap: asserters.assertSvelteMap,
 }
-
-// type Asserters = {
-//     str: asserters.Asserter<"str">,
-//     num: asserters.Asserter<"num">,
-//     digitStr: asserters.Asserter<"digitStr">,
-//     compNum: asserters.Asserter<"compNum">,
-//     bool: asserters.Asserter<"bool">,
-//     "true": asserters.Asserter<"true">,
-//     "false": asserters.Asserter<"false">,
-//     obj: asserters.Asserter<"obj">,
-//     arr: asserters.Asserter<"arr">,
-//     fn: asserters.Asserter<"fn">,
-//     asyncFn: asserters.Asserter<"asyncFn">,
-//     "null": asserters.Asserter<"null">,
-//     undef: asserters.Asserter<"undef">,
-//     boolNum: asserters.Asserter<"boolNum">,
-//     dateStr: asserters.Asserter<"dateStr">,
-//     arrStr: asserters.Asserter<"arrStr">,
-//     arrNum: asserters.Asserter<"arrNum">,
-//     arrBool: asserters.Asserter<"arrBool">,
-//     arrObj: asserters.Asserter<"arrObj">,
-//     arrArr: asserters.Asserter<"arrArr">,
-//     arrFn: asserters.Asserter<"arrFn">,
-//     arrNull: asserters.Asserter<"arrNull">,
-//     arrUndef: asserters.Asserter<"arrUndef">,
-//     date: asserters.Asserter<"date">,
-//     el: asserters.Asserter<"el">,
-//     htmlEl: asserters.Asserter<"htmlEl">,
-//     formEl: asserters.Asserter<"formEl">,
-//     inputEl: asserters.Asserter<"inputEl">,
-//     contentEditable: asserters.Asserter<"contentEditable">,
-//     node: asserters.Asserter<"node">,
-//     err: asserters.Asserter<"err">,
-//     regExp: asserters.Asserter<"regExp">,
-//     map: asserters.Asserter<"map">,
-//     set: asserters.Asserter<"set">,
-//     weakMap: asserters.Asserter<"weakMap">,
-//     weakSet: asserters.Asserter<"weakSet">,
-//     promise: asserters.Asserter<"promise">,
-//     svelteSet: asserters.Asserter<"svelteSet">,
-//     svelteMap: asserters.Asserter<"svelteMap">,
-// }
