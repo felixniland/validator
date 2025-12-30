@@ -6,6 +6,7 @@ export type {
     ToStr,
     MakeBrandedType,
     PrimitiveBase,
+    AutoCompleteStr,
     // obj validator stuff
         // PropKeysOnly,
         // NarrowProp,
@@ -15,6 +16,8 @@ export type {
 type ToStr<T extends string | number | bigint | boolean | null | undefined> = `${T}`;
 
 type NonEmptyArr<T> = MutNonEmptyArr<T> | ReadonlyNonEmptyArr<T>;
+
+type AutoCompleteStr<T extends string> = T | (string & {});
 
 // OBJ VALIDATOR STUFF 
     // type CreateObjValidatorByProp<T extends object, K extends PropKeysOnly<T>, NewV extends T[K]> = T[K] extends PrimitiveBase ? ValidatorFn<NarrowProp<T, K, NewV>, T> : never;
