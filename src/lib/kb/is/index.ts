@@ -1,4 +1,4 @@
-import { isStr } from "$lib/is/index.js";
+import { isDigitStr, isStr } from "$lib/is/index.js";
 import { newStrValidator } from "$lib/str/index.js";
 import { FN_KEYS, UNUSED, EDITING, NAV, SPECIAL, SPECIAL_NON_BRACKET, MOD, OPEN_BRACKET, CLOSE_BRACKET, type NumKey, type Alpha, type KBTextInput, type KBNonTextInput, type KBKey } from "../typesAndConsts.js";
 
@@ -21,20 +21,19 @@ export {
 }
 
 // const doesNotFireUpdateSelection = newStrValidator(DOES_NOT_FIRE_UPDATE_SELECTION);
-const isFunctionKey = newStrValidator(FN_KEYS, { caseInsensitive: true });
-const isUnusedKey = newStrValidator(UNUSED, { caseInsensitive: true });
-const isEditingKey = newStrValidator(EDITING, { caseInsensitive: true });
-const isNavKey = newStrValidator(NAV, { caseInsensitive: true });
+const isFunctionKey = newStrValidator(FN_KEYS);
+const isUnusedKey = newStrValidator(UNUSED);
+const isEditingKey = newStrValidator(EDITING);
+const isNavKey = newStrValidator(NAV);
 const isSpecialChar = newStrValidator(SPECIAL);
 const isSpecialNonBracket = newStrValidator(SPECIAL_NON_BRACKET);
-const isModKey = newStrValidator(MOD, { caseInsensitive: true });
+const isModKey = newStrValidator(MOD);
 const isOpenBracket = newStrValidator(OPEN_BRACKET);
 const isCloseBracket = newStrValidator(CLOSE_BRACKET);
 
-// regex
-const isNumKey = (str: string): str is NumKey => str.length === 1 && /^[0-9]$/.test(str);
-// this old version of "isAlpha" only works with English // const isAlpha = (str: string): str is Alpha => str.length === 1 && /^[a-zA-Z]$/.test(str);
+const isNumKey = (str: string): str is NumKey => str.length === 1 && isDigitStr(str);
 
+// this old version of "isAlpha" only works with English // const isAlpha = (str: string): str is Alpha => str.length === 1 && /^[a-zA-Z]$/.test(str);
 /**
  * @param str a string of any length
  * @returns boolean representing if the string is an alpha

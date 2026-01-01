@@ -23,6 +23,7 @@ export const isUndef = (val: unknown): val is undefined => typeof val === "undef
 export const isDigitStr = (val: unknown): val is DigitStr => {
 	if (!isStr(val)) return false;
 	for (const char of val) {
+        // regex // /^[0-9]$/.test(str);
         if (false === (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(char))) return false;
         // the below would error on " " (space), Number(space) === 0. d'oh!
 		// const num = Number(char);
