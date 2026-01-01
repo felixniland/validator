@@ -81,14 +81,20 @@ function getStdAsserter<const K extends ValIden>(type: K) {
 
     const refiner = IsIndividual.getIsValidator(type);
     const defaultErrMsg = getExpectedMsg(type);
-    
-    function asserter<TErrMsg extends string>(v: unknown, errMsg: TErrMsg): asserts v is Asserted;
-    function asserter<TErrMsg = GetExpectedMsg<K>>(v: unknown): asserts v is Asserted;
-    function asserter<TErrMsg extends DefaultMsg<GetExpectedMsg<K>>>(v: unknown, errMsg?: TErrMsg): asserts v is Asserted {
+
+    function asserter<const TErrMsg extends string>(v: unknown, errMsg: TErrMsg): asserts v is Asserted;
+    function asserter<const TErrMsg = GetExpectedMsg<K>>(v: unknown): asserts v is Asserted;
+    function asserter<const TErrMsg extends DefaultMsg<GetExpectedMsg<K>>>(v: unknown, errMsg?: TErrMsg): asserts v is Asserted {
         if (!refiner(v)) throw new Error(errMsg || defaultErrMsg);
     }
 
-    return asserter;
+    /** 
+     * a comment on every return
+    */
+    const ret = asserter;
+
+    // return asserter;
+    return ret;
 }
 
 // old "Asserter" type, that I no longer need due to using the overloads // type Asserter<K extends ValIden, TErrMsg extends string = DefaultMsg<GetExpectedMsg<K>>> = (v: unknown, errMsg?: TErrMsg) => asserts v is InferValidatedType<K>

@@ -1,5 +1,5 @@
 import { getIsValidator } from "./is/individual/index.js";
-import { isValIden, PRETTY_STR_MAP } from "./labels/index.js";
+import { isValIden, type PRETTY_STR_MAP } from "./labels/index.js";
 import type { Compute } from "./internal/types.js";
 import * as IsIndividual from "./is/individual/index.js";
 

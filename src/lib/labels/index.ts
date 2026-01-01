@@ -12,8 +12,8 @@ export {
 
 const isValIden = (v: unknown): v is ValIden => typeof v === "string" && v in PRETTY_STR_MAP;
 const getPrettyValIden = (l: ValIden): PrettyValIden => PRETTY_STR_MAP[l];
-const getPrettyIsValIden = (l: AssertsValIden): PrettyValIden => PRETTY_STR_MAP[toCamelCase(l.slice(7)) as ValIden];
-const getPrettyAssertsValIden = (l: IsValIden): PrettyValIden => PRETTY_STR_MAP[toCamelCase(l.slice(2)) as ValIden];
+const getPrettyAssertsValIden = (l: AssertsValIden): PrettyValIden => PRETTY_STR_MAP[toCamelCase(l.slice(7)) as ValIden];
+const getPrettyIsValIden = (l: IsValIden): PrettyValIden => PRETTY_STR_MAP[toCamelCase(l.slice(2)) as ValIden];
 
 const findPrettyValIden = (label: ValIden | IsValIden | AssertsValIden): PrettyValIden => {
 	if (label.startsWith("is")) return getPrettyValIden(label as any);

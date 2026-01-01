@@ -15,9 +15,8 @@ export const isBool = (val: unknown): val is boolean => typeof val === "boolean"
 export const isTrue = (val: unknown): val is true => typeof val === "boolean" && val === true;
 export const isFalse = (val: unknown): val is false => typeof val === "boolean" && val === false;
 export const isObj = (val: unknown): val is object => typeof val === "object" && val !== null;
-export const isArr = (val: unknown): val is Array<unknown> => Array.isArray(val);
 export const isFn = (val: unknown): val is Function => typeof val === "function";
-export const isAsyncFn = (val: unknown): val is FnInOut<any, any, "async"> => typeof val === "function" && val instanceof Object.getPrototypeOf(async function(){}).constructor;
+export const isAsyncFn = (val: unknown): val is FnInOut<unknown, unknown, "async"> => typeof val === "function" && val instanceof Object.getPrototypeOf(async function(){}).constructor;
 export const isNull = (val: unknown): val is null => val === null;
 export const isUndef = (val: unknown): val is undefined => typeof val === "undefined";
 
@@ -35,6 +34,7 @@ export const isDigitStr = (val: unknown): val is DigitStr => {
 export const isBoolNum = (val: unknown): val is BoolNum => isNum(val) && (val === 0 || val === 1);
 export const isDateStr = (val: unknown): val is DateStr => isStr(val) && !Number.isNaN(Date.parse(val));
 
+export const isArr = (val: unknown): val is Array<unknown> => Array.isArray(val);
 export const isArrStr = (val: unknown): val is Array<string> => Array.isArray(val) && val.every(isStr);
 export const isArrNum = (val: unknown): val is Array<number> => Array.isArray(val) && val.every(isNum);
 export const isArrBool = (val: unknown): val is Array<boolean> => Array.isArray(val) && val.every(isBool);
@@ -74,8 +74,8 @@ export const isWeakMap = (val: unknown): val is WeakMap<object, unknown> => val 
 export const isWeakSet = (val: unknown): val is WeakSet<object> => val instanceof WeakSet;
 export const isPromise = (val: unknown): val is Promise<unknown> => val instanceof Promise;
 
-export const isSvelteSet = (val: unknown): val is SvelteSet<any> => val instanceof SvelteSet;
-export const isSvelteMap = (val: unknown): val is SvelteMap<any, any> => val instanceof SvelteMap;
+export const isSvelteSet = (val: unknown): val is SvelteSet<unknown> => val instanceof SvelteSet;
+export const isSvelteMap = (val: unknown): val is SvelteMap<unknown, unknown> => val instanceof SvelteMap;
 
 const GET_IS_IDEN = {
     arr: "isArr",
