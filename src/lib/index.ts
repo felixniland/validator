@@ -3,7 +3,10 @@ import { isValIden, type PRETTY_STR_MAP } from "./labels/index.js";
 import type { Compute } from "./internal/types.js";
 import * as IsIndividual from "./is/individual/index.js";
 
-/** TODO: [] use some plugin or other to programatically generate JSDoc for the functions (where useful) */
+/**
+ * TODO:
+    * []: use some plugin or other to programatically generate JSDoc for the functions (where useful)
+*/
 
 export * from "./is/index.js"
 export * from "./assert/index.js"
