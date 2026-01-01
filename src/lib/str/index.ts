@@ -11,18 +11,6 @@ export {
     newStrValidator
 }
 
-export type {
-    StrValidatorFn,
-}
-
-type StrValidatorFn<T extends string> = ValidatorFn<T>;
-
-type StrValidatorOpts = {
-    caseInsensitive?: boolean;
-    // min?: number;
-    // max?: number;
-};
-
 /** i.e., without props lol */
 function newStrValidator<T extends string>(arr: NonEmptyArr<T>) {
     const set = new Set(arr);
@@ -35,6 +23,15 @@ function newStrValidator<T extends string>(arr: NonEmptyArr<T>) {
 }
 
 // NTS: stopped using this, as the params make the "v is T" return a lie. this was a silly idea for a validator; it makes more sense as a util, esp if it returns the transformed match (e.g., lowercase'd) 
+
+// type StrValidatorFn<T extends string> = ValidatorFn<T>;
+
+// type StrValidatorOpts = {
+//     caseInsensitive?: boolean;
+//     // min?: number;
+//     // max?: number;
+// };
+
 // generateStrValidator<T extends string>(arr: Array<T>, opts?: StrValidatorOpts<true>): string;
 // generateStrValidator<T extends string>(arr: Array<T>, opts?: StrValidatorOpts<false>): string;
 // function newStrValidatorWithProps<T extends string>(arr: NonEmptyArr<T>, opts?: StrValidatorOpts): StrValidatorFn<T> {
