@@ -1,3 +1,5 @@
+import type { ValidatorFn } from "$lib/index.js";
+
 export type {
     FnInOut,
     Compute,
@@ -8,9 +10,9 @@ export type {
     PrimitiveBase,
     AutoCompleteStr,
     // obj validator stuff
-        // PropKeysOnly,
-        // NarrowProp,
-        // CreateObjValidatorByProp,
+    PropKeysOnly,
+    NarrowProp,
+    CreateObjValidatorByProp
 }
 
 type ToStr<T extends string | number | bigint | boolean | null | undefined> = `${T}`;
@@ -18,26 +20,6 @@ type ToStr<T extends string | number | bigint | boolean | null | undefined> = `$
 type NonEmptyArr<T> = MutNonEmptyArr<T> | ReadonlyNonEmptyArr<T>;
 
 type AutoCompleteStr<T extends string> = T | (string & {});
-
-// OBJ VALIDATOR STUFF 
-    // type CreateObjValidatorByProp<T extends object, K extends PropKeysOnly<T>, NewV extends T[K]> = T[K] extends PrimitiveBase ? ValidatorFn<NarrowProp<T, K, NewV>, T> : never;
-
-    /**
-     * PURPOSE: constructing validator functions that narrow an obj's type via obj[key]
-     * @example type CompletedTask = NarrowProp<Task, "done", true>;
-     * to avoid TS's "predicate must extend...", therefore, returns the INTERSCTION of [RemapProp & T], thus:
-        * - narrows the type as one intuitively expects (e.g., CompletedTask above still works)
-        * - *generally* quiets TS
-        * still errors if used when there's no intersections(such as boolean => BoolNum, since they don't intersect at all), so this is not the right type for that
-    */
-    // type NarrowProp<T, K extends keyof T, V> = 
-    //   T extends object
-    //     ? T[K] extends PrimitiveBase
-    //       ? Compute<T & { [P in K]: V }>
-    //       : never
-    //     : never;
-
-    // type PropKeysOnly<T> = T extends object ? keyof Omit<T, FuncKeysOnly<T>> : never;
 
 type Constructor<T> = new (...args: Array<any>) => T;
 
@@ -66,18 +48,31 @@ type FnInOut<In, Out, S extends SyncArgs = "sync"> =
     type MutNonEmptyArr<T> = [T, ...T[]];
     type ReadonlyNonEmptyArr<T> = readonly [T, ...T[]];
             
-    // OBJ VALIDATOR SUPPORTS
-        // type SyncFuncKeysOnly<T> = Required<{
-        //     [K in keyof T]: T[K] extends (...args: Array<any>) => any 
-        //         ? T[K] extends (...args: Array<any>) => Promise<any> 
-        //             ? never 
-        //             : K
-        //         : never
-        // }>[keyof T];
+    // OBJ VALIDATOR STUFF 
+    type NarrowProp<T, K extends keyof T, V> = 
+        T extends object
+        ? T[K] extends PrimitiveBase
+            ? Compute<T & { [P in K]: V }>
+            : never
+        : never;
 
-        // type AsyncFuncKeysOnly<T> = Required<{
-        //     [K in keyof T]: T[K] extends (...args: Array<any>) => Promise<any>
-        //         ? K
-        //         : never
-        // }>[keyof T];
-        // type FuncKeysOnly<T> = SyncFuncKeysOnly<T> | AsyncFuncKeysOnly<T>;
+    type PropKeysOnly<T> = T extends object ? keyof Omit<T, FuncKeysOnly<T>> : never;
+
+    type CreateObjValidatorByProp<T extends object, K extends PropKeysOnly<T>, NewV extends T[K]> = T[K] extends PrimitiveBase ? ValidatorFn<NarrowProp<T, K, NewV>, T> : never;
+
+    // OBJ VALIDATOR SUPPORTS
+    type SyncFuncKeysOnly<T> = Required<{
+        [K in keyof T]: T[K] extends (...args: Array<any>) => any 
+            ? T[K] extends (...args: Array<any>) => Promise<any> 
+                ? never 
+                : K
+            : never
+    }>[keyof T];
+
+    type AsyncFuncKeysOnly<T> = Required<{
+        [K in keyof T]: T[K] extends (...args: Array<any>) => Promise<any>
+            ? K
+            : never
+    }>[keyof T];
+
+    type FuncKeysOnly<T> = SyncFuncKeysOnly<T> | AsyncFuncKeysOnly<T>;
