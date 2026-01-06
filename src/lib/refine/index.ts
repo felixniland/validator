@@ -1,7 +1,7 @@
 import * as IsIndividual from "../is/individual/index.js";
 import { getIsValidator } from "$lib/is/index.js";
 import { isValIden } from "$lib/labels/index.js";
-import type { GetRelatedValidatorReturn, GetValidatorReturn, InferValidatedType, RelatedValidators, ValidatorFn, ValIden } from "felixtypes";
+import type { GetRelatedValidatorReturn, GetValidatorReturn, RelatedValidators, ValidatorFn, ValIden } from "felixtypes";
 
 export {
     getRefiner,
@@ -37,7 +37,8 @@ const getRefiner = <const T, const VType extends ReadonlyArray<ValIden | Validat
     const validatorArr = refiners.map((idenOrFn) => INTERNAL_GET_VALIDATOR(idenOrFn));
     // const validatorArr = fnsOrTypes.map((idenOrFn) => getRefiner(idenOrFn as any)); // weirdly, this changed the order of the ReturnType (but nothing else...)
     const validator = (v: unknown) => validatorArr.some((validator) => (validator as any)(v));
-    return validator as (v: unknown) => v is (VType[number] extends ValIden ? InferValidatedType<VType[number]> : GetValidatorReturn<VType[number]>);
+    // return validator as (v: unknown) => v is (VType[number] extends ValIden ? InferValidatedType<VType[number]> : GetValidatorReturn<VType[number]>);
+    return validator as (v: unknown) => v is GetValidatorReturn<VType[number]>;
 }
 
 
