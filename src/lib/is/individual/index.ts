@@ -1,9 +1,7 @@
 import { SvelteMap, SvelteSet } from "svelte/reactivity";
 import { isComparableNumber } from "../../internal/index.js";
 import * as IsIndividual from "./index.js";
-import type { HTMLListElement, ValIden } from "$lib/index.js";
-import type { FnInOut } from "$lib/internal/types.js";
-import type { FiniteNumber, DigitStr, BoolNum, DateStr, ContentEditableElement } from "$lib/types/index.js";
+import type { BoolNum, ContentEditableElement, DateStr, DigitStr, FiniteNumber, FnInOut, HTMLListElement, ValIden } from "felixtypes";
 
 export const getIsValidator = <I extends ValIden>(val: I) => IsIndividual[GET_IS_IDEN[val]];
 
@@ -126,7 +124,7 @@ const GET_IS_IDEN = {
     headingEl: "isHeadingEl",
 } as const satisfies Record<ValIden, IsKey>;
 
-export type GET_IS_IDEN = typeof GET_IS_IDEN;
+type GET_IS_IDEN = typeof GET_IS_IDEN;
 
 // NOT EXPORTED
 type IsKey = keyof Omit<typeof IsIndividual, "createIsIden" | "getIsValidator" | "ALL_IS">;

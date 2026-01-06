@@ -1,6 +1,5 @@
-import type { ValidatorFn } from "$lib/index.js";
-import type { NarrowProp, PrimitiveBase, PropKeysOnly } from "$lib/internal/types.js";
-import { someObj, StrNumMaybeObj } from "$lib/test.js";
+import { someObj } from "$lib/test.js";
+import type { NarrowProp, PropKeysOnly } from "felixtypes";
 
 /**
      * NEW NOTES:

@@ -1,6 +1,6 @@
 import { isDigitStr, isStr } from "$lib/is/index.js";
 import { newStrValidator } from "$lib/str/index.js";
-import { FN_KEYS, UNUSED, EDITING, NAV, SPECIAL, SPECIAL_NON_BRACKET, MOD, OPEN_BRACKET, CLOSE_BRACKET, type NumKey, type Alpha, type KBTextInput, type KBNonTextInput, type KBKey } from "../typesAndConsts.js";
+import { FN_KEYS, UNUSED, EDITING, NAV, SPECIAL, SPECIAL_NON_BRACKET, MOD, OPEN_BRACKET, CLOSE_BRACKET, type NumKey, type Alpha, type KBTextInput, type KBNonTextInput, type KBKey } from "felixtypes";
 
 export {
     isAlpha,

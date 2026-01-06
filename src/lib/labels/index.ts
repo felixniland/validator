@@ -1,8 +1,9 @@
-import type { AssertsValIden, IsValIden, PrettyValIden, ValIden } from "../index.js";
+import type { ValIden } from "felixtypes";
+import type { AssertsValIden, IsValIden, PrettyValIden } from "../index.js";
 import { toCamelCase } from "../internal/index.js";
 
 export {
-    PRETTY_STR_MAP,
+    VAL_IDEN_TO_PRETTY_MAP,
     isValIden,
 	getPrettyValIden,
 	getPrettyIsValIden,
@@ -10,10 +11,10 @@ export {
 	findPrettyValIden
 }
 
-const isValIden = (v: unknown): v is ValIden => typeof v === "string" && v in PRETTY_STR_MAP;
-const getPrettyValIden = (l: ValIden): PrettyValIden => PRETTY_STR_MAP[l];
-const getPrettyAssertsValIden = (l: AssertsValIden): PrettyValIden => PRETTY_STR_MAP[toCamelCase(l.slice(7)) as ValIden];
-const getPrettyIsValIden = (l: IsValIden): PrettyValIden => PRETTY_STR_MAP[toCamelCase(l.slice(2)) as ValIden];
+const isValIden = (v: unknown): v is ValIden => typeof v === "string" && v in VAL_IDEN_TO_PRETTY_MAP;
+const getPrettyValIden = (l: ValIden): PrettyValIden => VAL_IDEN_TO_PRETTY_MAP[l];
+const getPrettyAssertsValIden = (l: AssertsValIden): PrettyValIden => VAL_IDEN_TO_PRETTY_MAP[toCamelCase(l.slice(7)) as ValIden];
+const getPrettyIsValIden = (l: IsValIden): PrettyValIden => VAL_IDEN_TO_PRETTY_MAP[toCamelCase(l.slice(2)) as ValIden];
 
 const findPrettyValIden = (label: ValIden | IsValIden | AssertsValIden): PrettyValIden => {
 	if (label.startsWith("is")) return getPrettyValIden(label as any);
@@ -21,13 +22,13 @@ const findPrettyValIden = (label: ValIden | IsValIden | AssertsValIden): PrettyV
 	return getPrettyValIden(label as any);
 }
 
-const PRETTY_STR_MAP = {
+const VAL_IDEN_TO_PRETTY_MAP = {
 	str: 'string',
 	num: 'number',
 	compNum: 'comparable number',
 	digitStr: 'string composed only of digits',
 	bool: 'boolean',
-	arr: 'Array<any>',
+	arr: 'Array<unknown>',
 	obj: 'object',
 	arrStr: 'Array<string>',
 	arrNum: 'Array<number>',
@@ -43,7 +44,7 @@ const PRETTY_STR_MAP = {
 	err: "Error",
 	fn: "Function",
 	asyncFn: "Async Function",
-	map: "Set<unknown>",
+	map: "Map<unknown, unknown>",
 	null: "null",
 	promise: "Promise<unknown>",
 	regExp: "RegExp",
@@ -51,20 +52,20 @@ const PRETTY_STR_MAP = {
 	true: "true",
 	false: "false",
 	undef: "undefined",
-	weakMap: "WeakMap",
-	weakSet: "WeakSet",
+	weakMap: "WeakMap<WeakKey, unknown>",
+	weakSet: "WeakSet<WeakKey>",
 	el: "Element",
 	htmlEl: "HTML Element",
 	inputEl: "HTML Input Element",
 	formEl: "HTML Form Element",
 	contentEditable: "Content Editable Element",
 	node: "Node",
-	svelteMap: "SvelteMap",
-	svelteSet: "SvelteSet",
+	svelteMap: "SvelteMap<unknown, unknown>",
+	svelteSet: "SvelteSet<unknown>",
     ul: "Unordered List Element",
     ol: "Ordered List Element",
     listEl: "(UL/OL) List Element",
     listItem: "HTML LI Element",
     blockEl: "Block Element",
     headingEl: "Heading Element",
-} as const;
+} as const satisfies Record<ValIden, string>;

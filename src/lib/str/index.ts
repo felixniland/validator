@@ -1,5 +1,5 @@
 import { isStr } from "$lib/is/index.js";
-import type { NonEmptyArr } from "$lib/internal/types.js";
+import type { NonEmptyArr } from "felixtypes";
 
 export {
     newStrValidator

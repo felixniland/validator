@@ -1,4 +1,5 @@
-import { isStr, type ValidatorFn } from "$lib/index.js";
+import { isStr } from "$lib/index.js";
+import type { ValidatorFn } from "felixtypes";
 import * as KB_STUFF from "../is/index.js";
 
 export {

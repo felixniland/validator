@@ -1,4 +1,4 @@
-import type { Constructor } from "../internal/types.js";
+import type { Constructor } from "felixtypes";
 
 export {
     newInstanceOfValidator,
