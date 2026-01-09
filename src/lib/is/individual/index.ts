@@ -14,7 +14,8 @@ export const isTrue = (val: unknown): val is true => typeof val === "boolean" &&
 export const isFalse = (val: unknown): val is false => typeof val === "boolean" && val === false;
 export const isObj = (val: unknown): val is object => typeof val === "object" && val !== null;
 export const isFn = (val: unknown): val is Function => typeof val === "function";
-export const isAsyncFn = (val: unknown): val is FnInOut<unknown, unknown, "async"> => typeof val === "function" && val instanceof Object.getPrototypeOf(async function(){}).constructor;
+// export const isAsyncFn = (val: unknown): val is FnInOut<unknown | undefined, unknown, "async"> => typeof val === "function" && val instanceof Object.getPrototypeOf(async function(){}).constructor;
+export const isAsyncFn = (val: unknown): val is ((args?: any) => Promise<any>) => typeof val === "function" && val instanceof Object.getPrototypeOf(async function(){}).constructor;
 export const isNull = (val: unknown): val is null => val === null;
 export const isUndef = (val: unknown): val is undefined => typeof val === "undefined";
 
