@@ -4,6 +4,7 @@ import type { AllowsDirectComparison, ValIden } from "felixtypes";
 /**
  * TODO:
     * []: use some plugin or other to programatically generate JSDoc for the functions (where useful)
+    * []: "isAsyncFn" returns "(...args?: any)", but I'd rather it return a spread; however, a spread cannot be optional. Not sure how to properly do this without it mandating that validat'ED asyncFns have args
 */
 
 export * from "./is/index.js"
