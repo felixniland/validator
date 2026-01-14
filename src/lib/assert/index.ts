@@ -1,4 +1,12 @@
 import * as asserters from "../assert/individual/index.js";
+import { INTERNAL_GET_VALIDATOR } from "$lib/refine/index.js";
+import type { ValIden, GetValidatorReturn, ValidatorFn } from "felixtypes";
+
+
+export {
+    getAsserter
+}
+
 export * from "./individual/index.js";
 
 export const ASSERT = {
@@ -84,3 +92,21 @@ export const ASSERT = {
 //     assertWeakMap,
 //     assertWeakSet,
 // } from "./individual/index.js";
+
+/**
+ * @usage DO NOT USE! TESTING ONLY!
+ * @todo add the errMsg validators etc, same as the internal asserter generator
+ */
+const getAsserter = <const T, const VType extends ReadonlyArray<ValIden | ValidatorFn<any, T>>>(
+    ...refiners: VType
+) => {
+    const validatorArr = refiners.map((idenOrFn) => INTERNAL_GET_VALIDATOR(idenOrFn));
+    const refiner = (v: unknown) => validatorArr.some((validator) => (validator as any)(v));
+    type Asserted = GetValidatorReturn<VType[number]>;
+   
+    function asserter<const TErrMsg extends string>(v: unknown, errMsg?: TErrMsg): asserts v is Asserted {
+        if (!refiner(v)) throw new Error(errMsg || "asserter failure");
+    }
+
+    return asserter;
+}

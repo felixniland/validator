@@ -6,6 +6,7 @@ import type { GetRelatedValidatorReturn, GetValidatorReturn, RelatedValidators, 
 export {
     getRefiner,
     getRelatedRefiner,
+    INTERNAL_GET_VALIDATOR,
 }
 
 function INTERNAL_GET_VALIDATOR(validator: ValIden | ValidatorFn<any, any>): ValidatorFn<any, any> {
