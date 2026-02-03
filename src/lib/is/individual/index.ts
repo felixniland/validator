@@ -1,14 +1,13 @@
 import { SvelteMap, SvelteSet } from "svelte/reactivity";
-import { isComparableNumber } from "../../internal/index.js";
 import * as IsIndividual from "./index.js";
-import type { BoolNum, ContentEditableElement, DateStr, DigitStr, FiniteNumber, FnInOut, HTMLListElement, ValIden } from "felixtypes";
+import type { BoolNum, ContentEditableElement, DateStr, DigitStr, HTMLListElement, ValIden } from "felixtypes";
 
 export const getIsValidator = <I extends ValIden>(val: I) => IsIndividual[GET_IS_IDEN[val]];
 
 /** documentation test on isStr */
 export const isStr = (val: unknown): val is string => typeof val === "string";
 export const isNum = (val: unknown): val is number => typeof val === "number";
-export const isCompNum = (val: unknown): val is FiniteNumber => isComparableNumber(val); // Assumes NumValidator exists
+export const isCompNum = (val: unknown): val is number => (typeof val === "number") && Number.isFinite(val);
 export const isBool = (val: unknown): val is boolean => typeof val === "boolean";
 export const isTrue = (val: unknown): val is true => typeof val === "boolean" && val === true;
 export const isFalse = (val: unknown): val is false => typeof val === "boolean" && val === false;

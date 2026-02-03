@@ -1,5 +1,5 @@
-import type { ValIden } from "felixtypes";
-import type { AssertsValIden, IsValIden, PrettyValIden } from "../index.js";
+import type { ValIden, AssertsValIden, IsValIden } from "felixtypes";
+import type { PrettyValIden } from "../index.js";
 import { toCamelCase } from "../internal/index.js";
 
 export {

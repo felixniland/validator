@@ -1,18 +1,9 @@
-import type { FiniteNumber, KeyStr, ModKey } from "felixtypes";
+import type { KeyStr, ModKey } from "felixtypes";
 
 export {
     toCamelCase,
-    isComparableNumber,
     capitalise,
-    getTypedEntries,
     modsFromKeyStr,
-}
-
-const getTypedEntries = <T extends object>(obj: T): Array<[keyof T, T[keyof T]]> => Object.entries(obj) as Array<[keyof T, T[keyof T]]>;
-
-const isComparableNumber = (v: unknown): v is FiniteNumber => {
-    const res = (typeof v === "number") && Number.isFinite(v);
-    return res;
 }
 
 const toCamelCase = (str: string) => str.charAt(0).toLowerCase() + (toTitleCase(str).replaceAll(" ", "")).slice(1);
@@ -61,12 +52,7 @@ function modStateFromKeyStr(keyStr: KeyStr): { ctrl: boolean, shift: boolean, al
 }
 
 function modsFromKeyStr(keyStr: KeyStr): Array<ModKey> {
-	return compact(getTypedEntries(
-		modStateFromKeyStr(keyStr))
-		.map(([mod, bool]) => bool ? mod : null)
-	);
-}
-
-function compact<T>(arr: Array<T>): Array<NonNullable<T>> {
-    return arr.filter(Boolean) as any;
+	return (Object.entries(modStateFromKeyStr(keyStr))
+        .map(([mod, bool]) => bool ? mod : null)
+        .filter(Boolean)) as Array<ModKey>;
 }
