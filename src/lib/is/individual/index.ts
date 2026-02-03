@@ -7,6 +7,8 @@ export const getIsValidator = <I extends ValIden>(val: I) => IsIndividual[GET_IS
 /** documentation test on isStr */
 export const isStr = (val: unknown): val is string => typeof val === "string";
 export const isNum = (val: unknown): val is number => typeof val === "number";
+
+/** returns if the given value is a comparable (i.e., finite) number */
 export const isCompNum = (val: unknown): val is number => (typeof val === "number") && Number.isFinite(val);
 export const isBool = (val: unknown): val is boolean => typeof val === "boolean";
 export const isTrue = (val: unknown): val is true => typeof val === "boolean" && val === true;
