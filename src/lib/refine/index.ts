@@ -1,27 +1,10 @@
-import * as IsIndividual from "../is/individual/index.js";
-import { getIsValidator } from "$lib/is/index.js";
-import { isValIden } from "$lib/labels/index.js";
 import type { GetRelatedValidatorReturn, GetValidatorReturn, RelatedValidators, ValidatorFn, ValIden } from "felixtypes";
+import { INTERNAL_getValidator } from "$lib/internal/getValidator/index.js";
 
 export {
     getRefiner,
     getRelatedRefiner,
-    INTERNAL_GET_VALIDATOR,
 }
-
-function INTERNAL_GET_VALIDATOR(validator: ValIden | ValidatorFn<any, any>): ValidatorFn<any, any> {
-    if (isValIden(validator)) return getIsValidator(validator);
-    if (IsIndividual.isFn(validator)) { // just assertFn here
-        // testing... TODO: need to put under devFlag, once I import that utility into here
-            // if (validator.length !== 1) throw new Error("expected validator to have args.length of 1");
-            // const res = validator({});
-            // if (typeof res !== "boolean") throw new Error("validator functions must return boolean");
-        return validator as ValidatorFn<any>;
-    }
-    throw new Error("expected valIden or function");
-} 
-
-
 
 /**
  * @param refiners spread array of (a) {@link ValIden} and/or (b) TypeGuard functions that take "v: unknown"
@@ -35,7 +18,7 @@ function INTERNAL_GET_VALIDATOR(validator: ValIden | ValidatorFn<any, any>): Val
 const getRefiner = <const T, const VType extends ReadonlyArray<ValIden | ValidatorFn<any, T>>>(
     ...refiners: VType
 ) => {
-    const validatorArr = refiners.map((idenOrFn) => INTERNAL_GET_VALIDATOR(idenOrFn));
+    const validatorArr = refiners.map((idenOrFn) => INTERNAL_getValidator(idenOrFn));
     // const validatorArr = fnsOrTypes.map((idenOrFn) => getRefiner(idenOrFn as any)); // weirdly, this changed the order of the ReturnType (but nothing else...)
     const validator = (v: unknown) => validatorArr.some((validator) => (validator as any)(v));
     // return validator as (v: unknown) => v is (VType[number] extends ValIden ? InferValidatedType<VType[number]> : GetValidatorReturn<VType[number]>);
@@ -55,7 +38,7 @@ const getRelatedRefiner = <const T>() => {
     const provideRefiners = <const RType extends T, const VType extends ReadonlyArray<RelatedValidators<T> | ValidatorFn<RType, T>>>(
         ...refiners: VType
     ) => {
-        const validatorArr = refiners.map((idenOrFn) => INTERNAL_GET_VALIDATOR(idenOrFn));
+        const validatorArr = refiners.map((idenOrFn) => INTERNAL_getValidator(idenOrFn));
         const validator = (v: T): v is GetRelatedValidatorReturn<T, RType, VType> => validatorArr.some((validator) => (validator as any)(v));
         return validator;
     }

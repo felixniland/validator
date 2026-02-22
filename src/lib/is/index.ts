@@ -1,5 +1,3 @@
-export { ALL_IS as IS } from "./all/index.js";
-
 export {
     isArr,
     isArrArr,
