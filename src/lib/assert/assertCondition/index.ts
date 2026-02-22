@@ -1,6 +1,6 @@
 import type { ValIden, GetterOr, GetValidatorReturn, ValidatorFn } from "felixtypes";
 import { isValIden } from "$lib/labels/index.js";
-import { isBool, isFn, isNull, isTrue} from "$lib/is/index.js";
+import { isBool, isFn, isNull, isStr, isTrue} from "$lib/is/index.js";
 import { getRefiner } from "$lib/refine/index.js";
 import { DEFAULT_ERR_MSG, getExpectedMsg } from "../get/utils.js";
 
@@ -43,7 +43,8 @@ function ASSERT<T>(
     if (pass) return;
 
     /** ok, now we need to throw... */
-    const errMsgFromCaller = combined.filter((item) => !isValIden(item))[0] as string | undefined;
+    const errMsgFromCaller = combined.filter((item) => isStr(item) && !isValIden(item))[0] as string | undefined;
+
     const finalErrMsg =
         errMsgFromCaller
         || getExpectedMsg(...valIdenArr)
