@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { finalAsserter as ASSERT } from "$lib/anotherScratcher.js";
+    import { finalAsserter as ASSERT } from "$lib/assert/assertCondition.js";
     import { onMount } from "svelte";
 
     const val = {} as unknown;
