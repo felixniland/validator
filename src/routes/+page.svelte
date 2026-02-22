@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { getAsserter } from "$lib/assert/get/getAsserter.js";
     import { WIP_DO_NOT_EXPORT_sneakyAsserter as sneakyAsserter } from "$lib/assert/sneaky/index.js";
+    import { ASSERT } from "$lib/index.js";
     import { onMount } from "svelte";
 
     function supremeDangerNoodle() {
@@ -15,15 +15,18 @@
     function doubleAllocateAsserterShennanigans() {
         const someVal = "hey";
 
-        const someAsserter = getAsserter("arr", "arrStr");
+        // const someAsserter = getAsserter("arr", "arrStr");
         // someAsserter(someVal); // ERROR
 
-        type Asserter = typeof someAsserter;
-        const typedAsserter: Asserter = someAsserter;
-        typedAsserter(someVal); // NO ERROR LMAO
+        // type Asserter = typeof someAsserter;
+        // const typedAsserter: Asserter = someAsserter;
+        // typedAsserter(someVal); // NO ERROR LMAO
     }
 
+    const val = {} as unknown;
+
     onMount(() => {
+        ASSERT(val);
         // supremeDangerNoodle();
     })
 </script>

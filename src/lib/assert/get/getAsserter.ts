@@ -1,6 +1,8 @@
 import type { ValIden, GetValidatorReturn, ValidatorFn } from "felixtypes";
-import { DEFAULT_ERR_MSG, getExpectedMsg } from "./utils.js";
+import { getErrMsg } from "./getErrMsg.js";
 import { INTERNAL_getValidator } from "$lib/internal/getValidator/index.js";
+
+// this works wonderfully, but requires manually type-ing the output, per TS's asserter conditions...
 
 /**
  * TODO:
@@ -16,14 +18,6 @@ import { INTERNAL_getValidator } from "$lib/internal/getValidator/index.js";
     * []: clean up the folder structure, export locations, naming of "INTERNAL_GET_VALIDATOR" into a proper "internal/..." folder, etc
     * 
  */
-
-export {
-    getAsserter
-}
-
-// export type {
-//     Asserter
-// }
 
 /**
  * @param refiners spread array of (a) {@link ValIden} and/or (b) TypeGuard functions that take "v: unknown"
@@ -43,7 +37,7 @@ export {
 */
 function getAsserter<const VType extends ReadonlyArray<ValIden | ValidatorFn<any, unknown>>>(...refiners: VType) {
     type Asserted = GetValidatorReturn<VType[number]>;
-    const defaultErrMsg = getExpectedMsg(...refiners as any) || DEFAULT_ERR_MSG;
+    const defaultErrMsg = getErrMsg(...refiners as any);
 
     const validatorArr = refiners.map((idenOrFn) => INTERNAL_getValidator(idenOrFn));
     const refiner = (v: unknown) => validatorArr.some((validator) => (validator as any)(v));

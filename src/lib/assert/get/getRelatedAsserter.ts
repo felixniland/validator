@@ -1,6 +1,5 @@
 import type { RelatedValidators, GetRelatedValidatorReturn, ValidatorFn } from "felixtypes";
-import { DEFAULT_ERR_MSG,
-getExpectedMsg } from "./utils.js";
+import { getErrMsg } from "./getErrMsg.js";
 import { INTERNAL_getValidator } from "$lib/internal/getValidator/index.js";
 
 /**
@@ -17,7 +16,7 @@ const getRelatedAsserter = <const T>() => {
     ) => {
         type Asserted = GetRelatedValidatorReturn<T, RType, VType>;
 
-        const defaultErrMsg = getExpectedMsg(...refiners as any) || DEFAULT_ERR_MSG;
+        const defaultErrMsg = getErrMsg(...refiners as any);
         
         const validatorArr = refiners.map((idenOrFn) => INTERNAL_getValidator(idenOrFn));
         const refiner = (v: T) => validatorArr.some((validator) => (validator as any)(v));

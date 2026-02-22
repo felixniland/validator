@@ -18,6 +18,13 @@ export const isFn = (val: unknown): val is Function => typeof val === "function"
 // export const isAsyncFn = (val: unknown): val is FnInOut<unknown | undefined, unknown, "async"> => typeof val === "function" && val instanceof Object.getPrototypeOf(async function(){}).constructor;
 export const isAsyncFn = (val: unknown): val is ((args?: any) => Promise<any>) => typeof val === "function" && val instanceof Object.getPrototypeOf(async function(){}).constructor;
 export const isNull = (val: unknown): val is null => val === null;
+
+export function isNonNullable<T>(v: T): v is NonNullable<T> {
+    if (isNull(v)) return false;
+    if (v === undefined) return false;
+    return true;
+}
+
 export const isUndef = (val: unknown): val is undefined => typeof val === "undefined";
 
 export const isDigitStr = (val: unknown): val is DigitStr => {
@@ -124,9 +131,7 @@ const GET_IS_IDEN = {
     blockEl: "isBlockEl",
     listItem: "isListItem",
     headingEl: "isHeadingEl",
-} as const satisfies Record<ValIden, IsKey>;
-
-type GET_IS_IDEN = typeof GET_IS_IDEN;
-
-// NOT EXPORTED
-type IsKey = keyof Omit<typeof IsIndividual, "createIsIden" | "getIsValidator" | "ALL_IS">;
+} as const satisfies Record<
+    ValIden,
+    keyof Omit<typeof IsIndividual, "createIsIden" | "getIsValidator" | "ALL_IS">
+>;

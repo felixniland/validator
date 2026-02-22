@@ -53,6 +53,10 @@ export const assertPromise = getStdAsserter("promise");
 export const assertSvelteSet = getStdAsserter("svelteSet");
 export const assertSvelteMap = getStdAsserter("svelteMap");
 
+export function assertNonNullable<T>(v: T): asserts v is NonNullable<T> {
+    if (!IsIndividual.isNonNullable(v)) throw new Error(`v is nullable: ${v}`);
+}
+
 
 
 
