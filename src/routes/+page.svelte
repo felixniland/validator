@@ -1,6 +1,6 @@
 <script lang="ts">
     import { WIP_DO_NOT_EXPORT_sneakyAsserter as sneakyAsserter } from "$lib/assert/sneaky/index.js";
-    import { ASSERT } from "$lib/index.js";
+    import { ASSERT, assertElement } from "$lib/index.js";
     import { onMount } from "svelte";
 
     function supremeDangerNoodle() {
