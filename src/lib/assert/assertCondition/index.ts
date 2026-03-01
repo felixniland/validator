@@ -6,6 +6,7 @@ import { getErrMsg } from "../get/getErrMsg.js";
 
 /**
  * TODO:
+    * []: I don't like how when you give it a condition, you call 'ASSERT(val, condition, errMsg)', whereas the others are 'ASSERT(val, errMsg, ...validators)'
     * []: (is/assert)non-nullable: move them to the appropriate folders... but I don't think they should be part of the "ValIden", given that they require a generic... so I need to create handling for that
     * []: update "ASSER"'s overloads to error if not given a condition. Right now, neither of these generate intellisense errors:
         * ASSERT(someVal)
