@@ -36,8 +36,7 @@ function getRefiner<const T, const VType extends ReadonlyArray<ValIden | Validat
 function getRelatedRefiner<const T>(v?: T) {
     return function provideRefiners<const RType extends T, const VType extends ReadonlyArray<RelatedValidators<T> | ValidatorFn<RType, T>>>(
         ...refiners: VType
-    // TODO: it is technically correct in that, e.g., "string does not extend Pokemon"; but in runtime, the value IS a Pokemon, and it's just loosely-typed as a "string", hence we are narrowing... so I'm not sure what the best practice is here
-    // @ts-expect-error
+    // @ts-expect-error(TODO: it is technically correct in that, e.g., "string does not extend Pokemon"; but in runtime, the value IS a Pokemon, and it's just loosely-typed as a "string", hence we are narrowing... so I'm not sure what the best practice is here)
     ): (v: T) => v is GetRelatedValidatorReturn<T, RType, VType> {
         return getRefiner(...refiners as any);
     }
