@@ -86,7 +86,8 @@ function getStdAsserter<const K extends ValIden>(type: K) {
     const defaultErrMsg = getExpectedMsg(type);
 
     function asserter<const TErrMsg extends string>(v: unknown, errMsg: TErrMsg): asserts v is Asserted;
-    function asserter<const TErrMsg = GetExpectedMsg<K>>(v: unknown, errMsg?: never): asserts v is Asserted;
+    function asserter<const TErrMsg = GetExpectedMsg<K>>(v: unknown): asserts v is Asserted;
+    function asserter(v: unknown, errMsg?: string | undefined): asserts v is Asserted;
     function asserter<const TErrMsg extends DefaultMsg<GetExpectedMsg<K>>>(v: unknown, errMsg?: TErrMsg): asserts v is Asserted {
         if (!refiner(v)) throw new Error(errMsg || defaultErrMsg);
     }
