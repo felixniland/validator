@@ -46,6 +46,7 @@ export {
     isWeakSet,
   
     mapHasKey,
+    isNonNullable,
 
     getIsValidator,
 } from "./individual/index.js";
