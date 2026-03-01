@@ -44,6 +44,8 @@ export {
     isUndef,
     isWeakMap,
     isWeakSet,
-    
+  
+    mapHasKey,
+
     getIsValidator,
 } from "./individual/index.js";

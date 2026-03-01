@@ -1,9 +1,7 @@
 /**
  * TODO:
-    * []: I think having "Svelte" in "devDepencies" is incorrect, since I'm using the 'instanceof SvelteMap' in the validators...? Or does the packaging grab the Symbol.hasInstance ro whatever and handle this???
-    * []: some cool stuff in scratchPad; incl. the, um, happy-to-take-generic asserters...!!! :)
     * []: make "getAsserter" and "getRelatedAsserter", same as for refiners...
-    * []: use some plugin or other to programatically generate JSDoc for the functions (where useful)
+    * []: triple-check the JSDoc (AI wrote it for all the standard 'isStr', I only wrote the weird ones, like 'mapHasKey'...)
     * []: "isAsyncFn" returns "(...args?: any)", but I'd rather it return a spread; however, a spread cannot be optional. Not sure how to properly do this without it mandating that validat'ED asyncFns have args
 */
 

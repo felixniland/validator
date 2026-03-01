@@ -6,7 +6,6 @@ import { INTERNAL_getValidator } from "$lib/internal/getValidator/index.js";
 
 /**
  * TODO:
-    * []: check the 'scratchPad' to do list stuff
     * last thing = update the documentation to
         * []: remove errMsg, since it isn't in play (I may add it later tho)
         * []: explain the options they have in terms of types; i.e., manually type "Asserter", use 'at-ts-expect-err' or similar, use "sneakyAsserter"...

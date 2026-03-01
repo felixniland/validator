@@ -1,118 +1,47 @@
-import type { ValIden, InferValidatedType, AutoCompleteStr as DefaultMsg } from "felixtypes";
-import * as IsIndividual from "../../is/individual/index.js";
-import { VAL_IDEN_TO_PRETTY_MAP } from "$lib/labels/index.js";
-
-export const assertStr = getStdAsserter("str");
-export const assertNum = getStdAsserter("num");
-export const assertDigitStr = getStdAsserter("digitStr");
-export const assertCompNum = getStdAsserter("compNum");
-export const assertBool = getStdAsserter("bool");
-export const assertTrue = getStdAsserter("true");
-export const assertFalse = getStdAsserter("false");
-export const assertObj = getStdAsserter("obj");
-export const assertArr = getStdAsserter("arr");
-export const assertFn = getStdAsserter("fn");
-export const assertAsyncFn = getStdAsserter("asyncFn");
-export const assertNull = getStdAsserter("null");
-export const assertUndef = getStdAsserter("undef");
-
-export const assertBoolNum = getStdAsserter("boolNum");
-export const assertDateStr = getStdAsserter("dateStr");
-
-export const assertArrStr = getStdAsserter("arrStr");
-export const assertArrNum = getStdAsserter("arrNum");
-export const assertArrBool = getStdAsserter("arrBool");
-export const assertArrObj = getStdAsserter("arrObj");
-export const assertArrArr = getStdAsserter("arrArr");
-export const assertArrFn = getStdAsserter("arrFn");
-export const assertArrNull = getStdAsserter("arrNull");
-export const assertArrUndef = getStdAsserter("arrUndef");
-
-export const assertDate = getStdAsserter("date");
-export const assertElement = getStdAsserter("el");
-export const assertHTMLElement = getStdAsserter("htmlEl");
-export const assertFormEl = getStdAsserter("formEl");
-export const assertInputEl = getStdAsserter("inputEl");
-export const assertContentEditable = getStdAsserter("contentEditable");
-export const assertNode = getStdAsserter("node");
-export const assertUL = getStdAsserter("ul");
-export const assertOL = getStdAsserter("ol");
-export const assertListEl = getStdAsserter("listEl");
-export const assertBlockEl = getStdAsserter("blockEl");
-export const assertHeadingEl = getStdAsserter("headingEl");
-export const assertListItem = getStdAsserter("listItem");
-
-export const assertError = getStdAsserter("err");
-export const assertRegExp = getStdAsserter("regExp");
-export const assertMap = getStdAsserter("map");
-export const assertSet = getStdAsserter("set");
-export const assertWeakMap = getStdAsserter("weakMap");
-export const assertWeakSet = getStdAsserter("weakSet");
-export const assertPromise = getStdAsserter("promise");
-
-export const assertSvelteSet = getStdAsserter("svelteSet");
-export const assertSvelteMap = getStdAsserter("svelteMap");
-
-export function assertNonNullable<T>(v: T): asserts v is NonNullable<T> {
-    if (!IsIndividual.isNonNullable(v)) throw new Error(`v is nullable: ${v}`);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/************** MAKING THE ASSERTERS **************/
-
-type GetExpectedMsg<TIden extends ValIden> = ReturnType<typeof getExpectedMsg<TIden>>;
-
-function getExpectedMsg<const TIden extends ValIden>(iden: TIden) {
-    return `expected ${VAL_IDEN_TO_PRETTY_MAP[iden]}` as const;
-}
-
-function getStdAsserter<const K extends ValIden>(type: K) {
-    type Asserted = InferValidatedType<K>;
-
-    const refiner = IsIndividual.getIsValidator(type);
-    const defaultErrMsg = getExpectedMsg(type);
-
-    function asserter<const TErrMsg extends string>(v: unknown, errMsg: TErrMsg): asserts v is Asserted;
-    function asserter<const TErrMsg = GetExpectedMsg<K>>(v: unknown): asserts v is Asserted;
-    function asserter(v: unknown, errMsg?: string | undefined): asserts v is Asserted;
-    function asserter<const TErrMsg extends DefaultMsg<GetExpectedMsg<K>>>(v: unknown, errMsg?: TErrMsg): asserts v is Asserted {
-        if (!refiner(v)) throw new Error(errMsg || defaultErrMsg);
-    }
-
-    /** 
-     * a comment on every return
-    */
-    const ret = asserter;
-
-    // return asserter;
-    return ret;
-}
-
-// old "Asserter" type, that I no longer need due to using the overloads // type Asserter<K extends ValIden, TErrMsg extends string = DefaultMsg<GetExpectedMsg<K>>> = (v: unknown, errMsg?: TErrMsg) => asserts v is InferValidatedType<K>
-
-// /** this is the old version of the StdAsserter, which did not allow custom errMsgs... then when I added it, the intellisense was ugly, so I rewrote it as overloaded to keep it handsome */
-// // NOTE: I've copied the Asserter type in manually, as when I used it for the return type, the intellisense on the getStdAsserter's above was "const assertStr: Asserter<"str">"; doing it this way shows the proper function signature
-// function getStdAsserter<const K extends ValIden>(type: K) {
-//     const refiner = IsIndividual.getIsValidator(type);
-//     const defaultErrMsg = getExpectedMsg(type);
-
-//     const ret = (v: unknown, errMsg: string = defaultErrMsg) => {
-//         if (!refiner(v)) throw new Error(errMsg);
-//     }
-    
-//     // ret satisfies Asserter<K, AutoCompleteStr<GetExpectedMsg<K>>>;
-//     return ret as <const TErrMsg extends string = DefaultMsg<GetExpectedMsg<K>>>(v: unknown, errMsg?: TErrMsg) => asserts v is InferValidatedType<K>;
-// }s
+export { assertArr } from "./assertArr.js";
+export { assertArrArr } from "./assertArrArr.js";
+export { assertArrBool } from "./assertArrBool.js";
+export { assertArrFn } from "./assertArrFn.js";
+export { assertArrNull } from "./assertArrNull.js";
+export { assertArrNum } from "./assertArrNum.js";
+export { assertArrObj } from "./assertArrObj.js";
+export { assertArrStr } from "./assertArrStr.js";
+export { assertArrUndef } from "./assertArrUndef.js";
+export { assertAsyncFn } from "./assertAsyncFn.js";
+export { assertBool } from "./assertBool.js";
+export { assertBoolNum } from "./assertBoolNum.js";
+export { assertBlockEl } from "./assertBlockEl.js";
+export { assertCompNum } from "./assertCompNum.js";
+export { assertContentEditable } from "./assertContentEditable.js";
+export { assertDate } from "./assertDate.js";
+export { assertDateStr } from "./assertDateStr.js";
+export { assertDigitStr } from "./assertDigitStr.js";
+export { assertElement } from "./assertElement.js";
+export { assertError } from "./assertError.js";
+export { assertFalse } from "./assertFalse.js";
+export { assertFn } from "./assertFn.js";
+export { assertFormEl } from "./assertFormEl.js";
+export { assertHeadingEl } from "./assertHeadingEl.js";
+export { assertHTMLElement } from "./assertHTMLElement.js";
+export { assertInputEl } from "./assertInputEl.js";
+export { assertListEl } from "./assertListEl.js";
+export { assertListItem } from "./assertListItem.js";
+export { assertMap } from "./assertMap.js";
+export { assertNode } from "./assertNode.js";
+export { assertNonNullable } from "./assertNonNullable.js";
+export { assertNull } from "./assertNull.js";
+export { assertNum } from "./assertNum.js";
+export { assertObj } from "./assertObj.js";
+export { assertOL } from "./assertOL.js";
+export { assertPromise } from "./assertPromise.js";
+export { assertRegExp } from "./assertRegExp.js";
+export { assertSet } from "./assertSet.js";
+export { assertStr } from "./assertStr.js";
+export { assertSvelteMap } from "./assertSvelteMap.js";
+export { assertSvelteSet } from "./assertSvelteSet.js";
+export { assertTrue } from "./assertTrue.js";
+export { assertUL } from "./assertUL.js";
+export { assertUndef } from "./assertUndef.js";
+export { assertWeakMap } from "./assertWeakMap.js";
+export { assertWeakSet } from "./assertWeakSet.js";
+export { assertMapHasKey } from "./assertMapHasKey.js";
