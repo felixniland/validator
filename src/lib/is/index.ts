@@ -47,6 +47,7 @@ export {
   
     mapHasKey,
     isNonNullable,
+    isNonEmpty,
 
     getIsValidator,
 } from "./individual/index.js";

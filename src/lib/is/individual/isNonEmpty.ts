@@ -25,14 +25,3 @@ function isNonEmpty<T>(arr: ReadonlyArray<T> | Array<T>): boolean {
         .length
     )
 }
-
-const readonlyArr: ReadonlyArray<string> = ["cool"];
-const mutArr: Array<string> = ["cool"];
-
-if (isNonEmpty(readonlyArr)) {
-    readonlyArr;
-}
-
-if (isNonEmpty(mutArr)) {
-    mutArr;
-}
