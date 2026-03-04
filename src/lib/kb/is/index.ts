@@ -1,7 +1,7 @@
 import { isDigitStr, isStr } from "$lib/is/index.js";
 import { newStrValidator } from "$lib/str/index.js";
-import { getConfig } from "$lib/cfg/index.js";
 import { FN_KEYS, UNUSED, EDITING, NAV, SPECIAL, SPECIAL_NON_BRACKET, MOD, OPEN_BRACKET, CLOSE_BRACKET, type NumKey, type Alpha, type KBTextInput, type KBNonTextInput, type KBKey } from "felixtypes";
+import { isVacuousArray } from "$lib/internal/index.js";
 
 export {
     isAlpha,
@@ -44,8 +44,8 @@ const isNumKey = (str: string): str is NumKey => str.length === 1 && isDigitStr(
  * - internally, it compares (for each char of the string) "does uppercase === lowercase", thus returning FALSE for numbers, emojis, etc
  */
 const isAlpha = (str: string): str is Alpha => {
-    if (!getConfig().allowVacuous && str.length === 0) return false;
-    return [...str].every((s) => s.toUpperCase() !== s.toLowerCase());
+    const arr = [...str];
+    return !isVacuousArray(arr) && arr.every((s) => s.toUpperCase() !== s.toLowerCase());
 };
 
 const isInputKey = (v: unknown): v is KBTextInput => isStr(v) && (isAlpha(v) || isNumKey(v) || isSpecialChar(v));
