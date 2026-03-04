@@ -45,3 +45,4 @@ export { assertUndef } from "./assertUndef.js";
 export { assertWeakMap } from "./assertWeakMap.js";
 export { assertWeakSet } from "./assertWeakSet.js";
 export { assertMapHasKey } from "./assertMapHasKey.js";
+export { assertNonEmpty } from "./assertNonEmpty.js";

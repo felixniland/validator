@@ -1,8 +1,4 @@
 import { isBool } from "./isBool.js";
+import { isVacuousArray } from "$lib/internal/isVacuousArr/index.js";
 
-/**
- * Checks if a value is an array of booleans.
- * @param val - The value to check
- * @returns True if the value is an array of booleans
- */
-export const isArrBool = (val: unknown): val is Array<boolean> => Array.isArray(val) && val.every(isBool);
+export const isArrBool = (val: unknown): val is Array<boolean> => Array.isArray(val) && !isVacuousArray(val) && val.every(isBool);

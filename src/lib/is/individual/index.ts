@@ -47,6 +47,7 @@ export { isWeakSet } from "./isWeakSet.js";
 
 /** non-val idens */
 export { mapHasKey } from "./mapHasKey.js";
+export { isNonEmpty } from "./isNonEmpty.js";
 
 /** utils */
 export { getIsValidator } from "./getIsValidator.js";

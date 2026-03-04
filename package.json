@@ -38,7 +38,7 @@
 		"publint": "^0.3.13",
 		"svelte": "^5.39.5",
 		"svelte-check": "^4.3.2",
-		"typescript": "^5.9.2",
+        "@typescript/native-preview": "^7.0.0-dev.20260301.1",
 		"vite": "^7.1.7",
         "felixtypes": "file:../felixtypes/felixtypes-0.0.1.tgz"
 	},
