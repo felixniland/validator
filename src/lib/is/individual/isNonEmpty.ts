@@ -20,6 +20,7 @@ function isNonEmpty<T>(arr: Array<T>): arr is MutNonEmptyArr<T>;
 function isNonEmpty<T>(arr: ReadonlyArray<T>): arr is ReadonlyNonEmptyArr<T>;
 function isNonEmpty<T>(arr: ReadonlyArray<T> | Array<T>): boolean {
     if (!arr.length) return false;
+    
     return Boolean(arr
         .filter((v) => !isUndef(v))
         .length

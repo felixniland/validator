@@ -25,6 +25,7 @@
     const val = {} as unknown;
 
     onMount(() => {
+        console.log(String([]));
         // ASSERT(val);
         // supremeDangerNoodle();
     })
