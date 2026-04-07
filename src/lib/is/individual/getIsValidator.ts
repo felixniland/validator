@@ -19,6 +19,7 @@ const GET_IS_IDEN = {
     arrStr: "isArrStr",
     arrUndef: "isArrUndef",
     asyncFn: "isAsyncFn",
+    bigint: "isBigInt",
     bool: "isBool",
     boolNum: "isBoolNum",
     compNum: "isCompNum",

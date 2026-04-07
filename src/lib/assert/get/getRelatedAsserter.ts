@@ -20,7 +20,8 @@ const getRelatedAsserter = <const T>() => {
         
         const validatorArr = refiners.map((idenOrFn) => INTERNAL_getValidator(idenOrFn));
         const refiner = (v: T) => validatorArr.some((validator) => (validator as any)(v));
-    
+
+        // @ts-expect-error ("A type predicate's type must be assignable to its parameter's type...")
         function asserter<const TErrMsg extends string>(v: T, errMsg?: TErrMsg): asserts v is Asserted {
             if (!refiner(v)) throw new Error(errMsg || defaultErrMsg);
         }

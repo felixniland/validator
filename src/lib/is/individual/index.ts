@@ -8,6 +8,7 @@ export { isArrObj } from "./isArrObj.js";
 export { isArrStr } from "./isArrStr.js";
 export { isArrUndef } from "./isArrUndef.js";
 export { isAsyncFn } from "./isAsyncFn.js";
+export { isBigInt } from "./isBigInt.js";
 export { isBool } from "./isBool.js";
 export { isBoolNum } from "./isBoolNum.js";
 export { isBlockEl } from "./isBlockEl.js";

@@ -12,6 +12,7 @@ const VAL_IDEN_TO_PRETTY_MAP = {
 	num: 'number',
 	compNum: 'comparable number',
 	digitStr: 'string composed only of digits',
+    bigint:"bigint",
 	bool: 'boolean',
 	arr: 'Array<unknown>',
 	obj: 'object',

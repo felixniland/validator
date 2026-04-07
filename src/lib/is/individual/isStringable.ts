@@ -19,28 +19,3 @@ function isStringable(v: unknown): v is Stringable {
             return (String(v) !== "[object Object]"); // NTS: this will capture nulls, and tries in order: toPrimitive => toString => valueOf
     }
 }
-
-function stringify(v: unknown) {
-    switch (typeof v) {
-        case "bigint":
-        case "boolean":
-        case "number":
-        case "string":
-        case "symbol":
-        case "undefined":
-            return String(v);
-
-        case "function":
-            return String(v.name ? v.name : v);
-
-        case "object":
-            if (v instanceof Error) return `${v.name}: ${v.message}`;
-
-            if (String(v) === "[object Object]") throw new Error("cannot stringify");
-            
-            return String(v);
-
-        default:
-            throw new Error("cannot stringify");
-    }
-}

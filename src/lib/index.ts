@@ -1,5 +1,6 @@
 /**
  * TODO:
+    * []: "isPosNum" (> 0...)
     * []: make "getAsserter" and "getRelatedAsserter", same as for refiners...
     * []: triple-check the JSDoc (AI wrote it for all the standard 'isStr', I only wrote the weird ones, like 'mapHasKey'...)
     * []: "isAsyncFn" returns "(...args?: any)", but I'd rather it return a spread; however, a spread cannot be optional. Not sure how to properly do this without it mandating that validat'ED asyncFns have args
