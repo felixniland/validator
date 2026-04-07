@@ -40,6 +40,7 @@ export { isSet } from "./isSet.js";
 export { isStr } from "./isStr.js";
 export { isSvelteMap } from "./isSvelteMap.js";
 export { isSvelteSet } from "./isSvelteSet.js";
+export { isSymbol } from "./isSymbol.js";
 export { isTrue } from "./isTrue.js";
 export { isUL } from "./isUL.js";
 export { isUndef } from "./isUndef.js";

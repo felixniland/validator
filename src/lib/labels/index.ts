@@ -48,6 +48,7 @@ const VAL_IDEN_TO_PRETTY_MAP = {
 	node: "Node",
 	svelteMap: "SvelteMap<unknown, unknown>",
 	svelteSet: "SvelteSet<unknown>",
+    symbol: "symbol",
     ul: "Unordered List Element",
     ol: "Ordered List Element",
     listEl: "(UL/OL) List Element",

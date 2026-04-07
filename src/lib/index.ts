@@ -17,3 +17,12 @@ export * from "./labels/index.js";
 
 export * from "./types.js";
 export * from "./cfg/index.js";
+
+/** checker that there are no missing asserts */
+// type CutStrPrefix<S extends string, P extends string> = S extends `${P}${infer Rest}` ? Rest : never;
+// type TypeGuards = CutStrPrefix<keyof typeof import ("./is/individual/index.js"), "is">; // i.e., this will exclude "getIsValidator"
+// type Asserters = CutStrPrefix<keyof typeof import("./assert/individual/index.js"), "assert">;
+
+// /** exclude 'MapHasKey' explicitly since it does not match the 'is' prefix above */
+// type AsserterWithNoIs = Exclude<Asserters, TypeGuards | "MapHasKey">;
+// type IsWithNoAsserter = Exclude<TypeGuards, Asserters>;

@@ -45,6 +45,7 @@ const GET_IS_IDEN = {
     str: "isStr",
     svelteMap: "isSvelteMap",
     svelteSet: "isSvelteSet",
+    symbol: "isSymbol",
     true: "isTrue",
     undef: "isUndef",
     weakMap: "isWeakMap",

@@ -4,4 +4,4 @@
  * @throws Error if the value is not an HTMLElement
  */
 import { getStdAsserter } from "./_assertUtils.js";
-export const assertHTMLElement = getStdAsserter("htmlEl");
+export const assertHtmlEl = getStdAsserter("htmlEl");
