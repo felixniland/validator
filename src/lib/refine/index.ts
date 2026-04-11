@@ -1,10 +1,14 @@
-import type { GetRelatedValidatorReturn, GetValidatorReturn, RelatedValidators, ValidatorFn, ValIden } from "felixtypes";
+import type { GetRelatedValidatorReturn, GetValidatorReturn, NoDuplicatesAllowed, RelatedValidators, ValidatorFn, ValIden } from "felixtypes";
 import { INTERNAL_getValidator } from "$lib/internal/getValidator/index.js";
 
 export {
     getRefiner,
     getRelatedRefiner,
 }
+
+/**
+ * TODO: "isRelatedRefiner" validator fn - see notes below
+*/
 
 /**
  * @param refiners spread array of (a) {@link ValIden} and/or (b) TypeGuard functions that take "v: unknown"
@@ -41,3 +45,47 @@ function getRelatedRefiner<const T>(v?: T) {
         return getRefiner(...refiners as any);
     }
 }
+
+
+
+
+
+
+
+
+
+/**
+ * copied from "UTILS" so that I can make this "ALL_RELATED_REFINERS", the purpose of which is to make an "isRelatedRefiner" validator
+ * what is missing is that it's obviously quite broad
+    * I want to expand the 'K' of the Record to have, e.g., "arr"
+        * and I call "isArr" before I call "isRelatedRefiner", so I can know which key of the "ALL_RELATED_REFINERS" to call :)
+*/
+type EnsureAllMembers<Union extends string, Arr extends ReadonlyArray<string>> = 
+	[Union] extends [Arr[number]] 
+		? [Arr[number]] extends [Union] 
+			? Arr 
+			: never
+	: `Missing members in array: ${Exclude<Union, Arr[number]>}`
+
+function allOf<Union extends string>() {
+	return function<const Arr extends ReadonlyArray<Union>>(
+		arr: Arr & EnsureAllMembers<Union, Arr> & NoDuplicatesAllowed<Arr>
+	): Arr {
+        return arr as Arr;
+	};
+}
+
+type JsTypes = "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined";
+
+const ALL_RELATED_REFINERS = {
+    "string": allOf<RelatedValidators<string>>()(["dateStr", "digitStr", "str"]),
+    "bigint": allOf<RelatedValidators<bigint>>()(["bigint"]),
+    "boolean": allOf<RelatedValidators<boolean>>()(["bool", "true", "false"]),
+    "function": allOf<RelatedValidators<Function>>()(["asyncFn", "fn", "obj"]),
+    "object": allOf<RelatedValidators<object>>()(["weakSet", "weakMap", "ul", "svelteSet", "svelteMap", "set", "regExp", "promise", "ol", "obj", "node", "map", "listItem", "listEl", "inputEl", "headingEl", "htmlEl", "formEl", "fn", "err", "el", "digitStr", "dateStr", "date", "contentEditable", "blockEl", "asyncFn", "arrUndef", "arrStr", "arrObj", "arrNum", "arrNull", "arrFn", "arrBool", "arrArr", "arr"]),
+    "symbol": allOf<RelatedValidators<symbol>>()(["symbol"]),
+    "undefined": allOf<RelatedValidators<undefined>>()(["undef"]),
+    "number": allOf<RelatedValidators<number>>()(["boolNum", "compNum", "num"]),
+} as const satisfies {
+    [K in JsTypes]: ReadonlyArray<ValIden>;
+};
