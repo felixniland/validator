@@ -8,6 +8,10 @@ import type { ValIden } from "felixtypes";
  */
 export const getIsValidator = <I extends ValIden>(val: I) => IsIndividual[GET_IS_IDEN[val]];
 
+export {
+    GET_IS_IDEN as _INTERNAL_GET_IS_IDEN
+}
+
 const GET_IS_IDEN = {
     arr: "isArr",
     arrArr: "isArrArr",
@@ -56,6 +60,11 @@ const GET_IS_IDEN = {
     blockEl: "isBlockEl",
     listItem: "isListItem",
     headingEl: "isHeadingEl",
+    BR: "isBR",
+    textNode: "isTextNode",
+    nonNullable: "isNonNullable",
+    emptyTextNode: "isEmptyTextNode",
+    nonEmpty: "isNonEmpty",
 } as const satisfies Record<
     ValIden,
     keyof Omit<typeof IsIndividual, "createIsIden" | "getIsValidator" | "ALL_IS">

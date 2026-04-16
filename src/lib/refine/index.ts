@@ -77,15 +77,27 @@ function allOf<Union extends string>() {
 
 type JsTypes = "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined";
 
+/** my bespoke relatedValidators for each type... */
+
+type RelatedStr = Exclude<RelatedValidators<string>, "nonNullable">;
+type RelatedBigInt = Exclude<RelatedValidators<bigint>, "nonNullable">;
+type RelatedBool = Exclude<RelatedValidators<boolean>, "nonNullable">;
+type RelatedFn = Exclude<RelatedValidators<Function>, "nonNullable">;
+type RelatedSymbol = Exclude<RelatedValidators<symbol>, "nonNullable">;
+type RelatedUndef = Exclude<RelatedValidators<undefined>, "nonNullable">;
+type RelatedNumber = Exclude<RelatedValidators<number>, "nonNullable">;
+/** unchanged */
+type RelatedObj = RelatedValidators<object>;
+
 const ALL_RELATED_REFINERS = {
-    "string": allOf<RelatedValidators<string>>()(["dateStr", "digitStr", "str"]),
-    "bigint": allOf<RelatedValidators<bigint>>()(["bigint"]),
-    "boolean": allOf<RelatedValidators<boolean>>()(["bool", "true", "false"]),
-    "function": allOf<RelatedValidators<Function>>()(["asyncFn", "fn", "obj"]),
-    "object": allOf<RelatedValidators<object>>()(["weakSet", "weakMap", "ul", "svelteSet", "svelteMap", "set", "regExp", "promise", "ol", "obj", "node", "map", "listItem", "listEl", "inputEl", "headingEl", "htmlEl", "formEl", "fn", "err", "el", "digitStr", "dateStr", "date", "contentEditable", "blockEl", "asyncFn", "arrUndef", "arrStr", "arrObj", "arrNum", "arrNull", "arrFn", "arrBool", "arrArr", "arr"]),
-    "symbol": allOf<RelatedValidators<symbol>>()(["symbol"]),
-    "undefined": allOf<RelatedValidators<undefined>>()(["undef"]),
-    "number": allOf<RelatedValidators<number>>()(["boolNum", "compNum", "num"]),
+    "string": allOf<RelatedStr>()(["dateStr", "digitStr", "str"]),
+    "bigint": allOf<RelatedBigInt>()(["bigint"]),
+    "boolean": allOf<RelatedBool>()(["bool", "true", "false"]),
+    "function": allOf<RelatedFn>()(["asyncFn", "fn", "obj"]),
+    "object": allOf<RelatedObj>()(["weakSet", "weakMap", "ul", "svelteSet", "svelteMap", "set", "regExp", "promise", "ol", "obj", "node", "map", "listItem", "listEl", "inputEl", "headingEl", "htmlEl", "formEl", "fn", "err", "el", "digitStr", "dateStr", "date", "contentEditable", "blockEl", "asyncFn", "arrUndef", "arrStr", "arrObj", "arrNum", "arrNull", "arrFn", "arrBool", "arrArr", "arr", "nonEmpty", "nonNullable", "textNode", "emptyTextNode", "BR"]),
+    "symbol": allOf<RelatedSymbol>()(["symbol"]),
+    "undefined": allOf<RelatedUndef>()(["undef"]),
+    "number": allOf<RelatedNumber>()(["boolNum", "compNum", "num"]),
 } as const satisfies {
     [K in JsTypes]: ReadonlyArray<ValIden>;
 };

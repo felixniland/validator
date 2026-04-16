@@ -27,7 +27,7 @@
 
 //     // function validateObjKey<const TObj extends PlainObject, const TKey extends PropertyKey>(v: TObj, key: TKey): v is TObj & {[Iden in TKey]: TKey extends keyof TObj ? TObj[TKey] : GetValidatorReturn<TVal> } {
 //     function validateObjKey<const TObj extends PlainObject, const TKey extends PropertyKey>(v: TObj, key: TKey): v is Compute<TObj & {[Iden in TKey]: Validated }> {
-//         if (!(key in v)) return false;
+//         if (!(key in v)) return false;x
 //         return (validator)(v[key]);
 //     }
 

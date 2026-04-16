@@ -1,5 +1,5 @@
 import type { ValIden, ValidatorFn } from "felixtypes";
-import * as IsIndividual from "../../is/individual/index.js";
+import * as IsIndividual from "../../is/index.js";
 import { getIsValidator } from "$lib/is/index.js";
 import { isValIden } from "$lib/labels/index.js";
 

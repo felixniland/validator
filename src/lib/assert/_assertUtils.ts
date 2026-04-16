@@ -1,6 +1,6 @@
 import type { ValIden, InferValidatedType, AutoCompleteStr as DefaultMsg } from "felixtypes";
-import * as IsIndividual from "../../is/individual/index.js";
 import { VAL_IDEN_TO_PRETTY_MAP } from "$lib/labels/index.js";
+import { getIsValidator } from "../is/index.js";
 
 type GetExpectedMsg<TIden extends ValIden> = ReturnType<typeof getExpectedMsg<TIden>>;
 
@@ -11,7 +11,7 @@ export function getExpectedMsg<const TIden extends ValIden>(iden: TIden) {
 export function getStdAsserter<const K extends ValIden>(type: K) {
     type Asserted = InferValidatedType<K>;
 
-    const refiner = IsIndividual.getIsValidator(type);
+    const refiner = getIsValidator(type);
     const defaultErrMsg = getExpectedMsg(type);
 
     function asserter<const TErrMsg extends string>(v: unknown, errMsg: TErrMsg): asserts v is Asserted;
