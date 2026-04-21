@@ -94,7 +94,7 @@ const ALL_RELATED_REFINERS = {
     "bigint": allOf<RelatedBigInt>()(["bigint"]),
     "boolean": allOf<RelatedBool>()(["bool", "true", "false"]),
     "function": allOf<RelatedFn>()(["asyncFn", "fn", "obj"]),
-    "object": allOf<RelatedObj>()(["weakSet", "weakMap", "ul", "svelteSet", "svelteMap", "set", "regExp", "promise", "ol", "obj", "node", "map", "listItem", "listEl", "inputEl", "headingEl", "htmlEl", "formEl", "fn", "err", "el", "digitStr", "dateStr", "date", "contentEditable", "blockEl", "asyncFn", "arrUndef", "arrStr", "arrObj", "arrNum", "arrNull", "arrFn", "arrBool", "arrArr", "arr", "nonEmpty", "nonNullable", "textNode", "emptyTextNode", "BR"]),
+    "object": allOf<RelatedObj>()(["weakSet", "weakMap", "ul", "svelteSet", "svelteMap", "set", "regExp", "promise", "ol", "obj", "node", "map", "listItem", "listEl", "inputEl", "headingEl", "htmlEl", "formEl", "fn", "err", "el", "digitStr", "dateStr", "date", "contentEditable", "blockEl", "asyncFn", "arrUndef", "arrStr", "arrObj", "arrNum", "arrNull", "arrFn", "arrBool", "arrArr", "arr", "textNode", "emptyTextNode", "BR", "span"]), // "nonEmpty", "nonNullable"
     "symbol": allOf<RelatedSymbol>()(["symbol"]),
     "undefined": allOf<RelatedUndef>()(["undef"]),
     "number": allOf<RelatedNumber>()(["boolNum", "compNum", "num"]),

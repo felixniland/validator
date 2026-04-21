@@ -57,9 +57,10 @@ const VAL_IDEN_TO_PRETTY_MAP = {
     headingEl: "Heading Element",
     BR: "HTML BR Element",
     emptyTextNode: "empty Text Node",
-    nonEmpty: "Non-Empty Array",
-    nonNullable: "Non-nullable",
     textNode: "Text Node",
+    span: "HTML Span Element",
+    // nonEmpty: "Non-Empty Array",
+    // nonNullable: "Non-nullable",
 } as const satisfies Record<ValIden, string>;
 
 // const getPrettyValIden = (l: ValIden): PrettyValIden => VAL_IDEN_TO_PRETTY_MAP[l];

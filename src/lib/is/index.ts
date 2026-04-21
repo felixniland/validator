@@ -29,6 +29,9 @@ export * from "./isListEl.js";
 export * from "./isListItem.js";
 export * from "./isMap.js";
 export * from "./isNode.js";
+export * from "./isTextNode.js";
+export * from "./isEmptyTextNode.js";
+export * from "./isBR.js";
 export * from "./isNonNullable.js";
 export * from "./isNull.js";
 export * from "./isNum.js";
@@ -37,6 +40,7 @@ export * from "./isOL.js";
 export * from "./isPromise.js";
 export * from "./isRegExp.js";
 export * from "./isSet.js";
+export * from "./isSpan.js";
 export * from "./isStr.js";
 export * from "./isSvelteMap.js";
 export * from "./isSvelteSet.js";
@@ -52,4 +56,4 @@ export * from "./mapHasKey.js";
 export * from "./isNonEmpty.js";
 
 /** utils */
-export * from "./getIsValidator.js";
+export { getIsValidator } from "./getIsValidator.js";

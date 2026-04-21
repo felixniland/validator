@@ -6,10 +6,11 @@ import type { ValIden } from "felixtypes";
  * @param val - The ValIden to get the validator for
  * @returns The validator function
  */
-export const getIsValidator = <I extends ValIden>(val: I) => IsIndividual[GET_IS_IDEN[val]];
+const getIsValidator = <I extends ValIden>(val: I) => IsIndividual[GET_IS_IDEN[val]];
 
 export {
-    GET_IS_IDEN as _INTERNAL_GET_IS_IDEN
+    GET_IS_IDEN as _INTERNAL_GET_IS_IDEN,
+    getIsValidator
 }
 
 const GET_IS_IDEN = {
@@ -62,9 +63,10 @@ const GET_IS_IDEN = {
     headingEl: "isHeadingEl",
     BR: "isBR",
     textNode: "isTextNode",
-    nonNullable: "isNonNullable",
     emptyTextNode: "isEmptyTextNode",
-    nonEmpty: "isNonEmpty",
+    span: "isSpan",
+    // nonNullable: "isNonNullable",
+    // nonEmpty: "isNonEmpty",
 } as const satisfies Record<
     ValIden,
     keyof Omit<typeof IsIndividual, "createIsIden" | "getIsValidator" | "ALL_IS">
