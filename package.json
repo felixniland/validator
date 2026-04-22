@@ -45,8 +45,5 @@
 	},
 	"keywords": [
 		"svelte"
-	],
-	"dependencies": {
-		"validator": "file:"
-	}
+	]
 }
