@@ -87,10 +87,10 @@ type RelatedSymbol = Exclude<RelatedValidators<symbol>, "nonNullable">;
 type RelatedUndef = Exclude<RelatedValidators<undefined>, "nonNullable">;
 type RelatedNumber = Exclude<RelatedValidators<number>, "nonNullable">;
 /** unchanged */
-type RelatedObj = RelatedValidators<object>;
+type RelatedObj = Exclude<RelatedValidators<object>, "v4UUID">;
 
 const ALL_RELATED_REFINERS = {
-    "string": allOf<RelatedStr>()(["dateStr", "digitStr", "str"]),
+    "string": allOf<RelatedStr>()(["dateStr", "digitStr", "str", "v4UUID"]),
     "bigint": allOf<RelatedBigInt>()(["bigint"]),
     "boolean": allOf<RelatedBool>()(["bool", "true", "false"]),
     "function": allOf<RelatedFn>()(["asyncFn", "fn", "obj"]),

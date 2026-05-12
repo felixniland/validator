@@ -65,6 +65,7 @@ const GET_IS_IDEN = {
     textNode: "isTextNode",
     emptyTextNode: "isEmptyTextNode",
     span: "isSpan",
+    v4UUID: "isV4UUID",
     // nonNullable: "isNonNullable",
     // nonEmpty: "isNonEmpty",
 } as const satisfies Record<

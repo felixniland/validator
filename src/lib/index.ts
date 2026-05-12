@@ -24,18 +24,21 @@ export * from "./cfg/index.js";
 
 
 /** checker that there are no missing asserts */
+    // type CutStrPrefix<S extends string, P extends string> = S extends `${P}${infer Rest}` ? Rest : never;
+    // type IsFunctions = keyof typeof import ("./is/index.js");
+    // type AsserterFunctions = keyof typeof import("./assert/index.js");
+    // type TypeGuards = CutStrPrefix<IsFunctions, "is">; // i.e., this will exclude "getIsValidator"
+    // type Asserters = CutStrPrefix<AsserterFunctions, "assert">;
 
-// type CutStrPrefix<S extends string, P extends string> = S extends `${P}${infer Rest}` ? Rest : never;
-// type IsFunctions = keyof typeof import ("./is/index.js");
-// type AsserterFunctions = keyof typeof import("./assert/index.js");
-// type TypeGuards = CutStrPrefix<IsFunctions, "is">; // i.e., this will exclude "getIsValidator"
-// type Asserters = CutStrPrefix<AsserterFunctions, "assert">;
+    // /** exclude 'MapHasKey' explicitly since it does not match the 'is' prefix above */
+    // type AsserterWithNoIs = Exclude<Asserters, TypeGuards | "MapHasKey">;
+    // // "BR" // "textNode" // "emptyTextNode"
+    // type IsWithNoAsserter = Exclude<TypeGuards, Asserters>;
+    // type IsFunctionsMappedToValIden = typeof import ("./is/getIsValidator.js")["_INTERNAL_GET_IS_IDEN"][keyof typeof import ("./is/getIsValidator.js")["_INTERNAL_GET_IS_IDEN"]];
 
-// /** exclude 'MapHasKey' explicitly since it does not match the 'is' prefix above */
-// type AsserterWithNoIs = Exclude<Asserters, TypeGuards | "MapHasKey">;
-// // "BR" // "textNode" // "emptyTextNode"
-// type IsWithNoAsserter = Exclude<TypeGuards, Asserters>;
-// type IsFunctionsMappedToValIden = typeof import ("./is/getIsValidator.js")["_INTERNAL_GET_IS_IDEN"][keyof typeof import ("./is/getIsValidator.js")["_INTERNAL_GET_IS_IDEN"]];
+    // type KeysInPrettyMap = keyof typeof import ("./labels/index.js")["VAL_IDEN_TO_PRETTY_MAP"];
+    // import type { ValIden } from "felixtypes";
+    // type MissingFromPrettyMap = Exclude<ValIden, KeysInPrettyMap>;
 
-// /** note: this isn't *quite* accurate, since what it does is check the "getIsValidator" fn; however that fn will error if it is missing any ValIdens */
-// type IsFunctionsWithoutValIden = Exclude<IsFunctions, IsFunctionsMappedToValIden | "isNonEmpty" | "isNonNullable" | "mapHasKey" | "getIsValidator" | "_INTERNAL_GET_IS_IDEN">;
+    // /** note: this isn't *quite* accurate, since what it does is check the "getIsValidator" fn; however that fn will error if it is missing any ValIdens */
+    // type IsFunctionsWithoutValIden = Exclude<IsFunctions, IsFunctionsMappedToValIden | "isNonEmpty" | "isNonNullable" | "mapHasKey" | "getIsValidator" | "_INTERNAL_GET_IS_IDEN">;
