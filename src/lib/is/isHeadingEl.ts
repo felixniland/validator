@@ -1,4 +1,4 @@
-import { newStrValidator } from "$lib/index.js";
+import { newStrValidator } from "../str/index.js";
 import { isHtmlEl } from "./isHtmlEl.js";
 
 const isHeaderTag = newStrValidator(['H1', 'H2', 'H3', 'H4', 'H5', 'H6']);
