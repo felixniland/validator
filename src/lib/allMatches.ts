@@ -8,7 +8,10 @@ export {
 
 const VAL_IDENS = Object.keys(VAL_IDEN_TO_PRETTY_MAP) as Array<keyof typeof VAL_IDEN_TO_PRETTY_MAP>;
 
-/** returns an Array<ValIden> for all idens that v matches */
+/**
+ * @returns an Array<ValIden> for all idens that v matches
+ * this is a run-time check: i.e., it has no generics on it, and does not narrow
+*/
 function getAllMatchingTypes(v: unknown): Array<ValIden> {
     return VAL_IDENS.filter((iden) => getIsValidator(iden)(v));
 }
