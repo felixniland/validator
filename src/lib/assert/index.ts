@@ -67,5 +67,6 @@ export * from "./assertTrue.js";
 export * from "./assertUL.js";
 export * from "./assertUndef.js";
 export * from "./assertV4UUID.js";
+export * from "./assertVoidEl.js";
 export * from "./assertWeakMap.js";
 export * from "./assertWeakSet.js";

@@ -14,7 +14,6 @@ import { INTERNAL_getValidator } from "$lib/internal/getValidator/index.js";
                 * type Asserter = typeof someAsserter;
                 * const typedAsserter: Asserter = someAsserter;
                 * typedAsserter("some val");
-    * []: clean up the folder structure, export locations, naming of "INTERNAL_GET_VALIDATOR" into a proper "internal/..." folder, etc
     * 
  */
 

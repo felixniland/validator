@@ -6,6 +6,7 @@
     * []: "isAsyncFn" returns "(...args?: any)", but I'd rather it return a spread; however, a spread cannot be optional. Not sure how to properly do this without it mandating that validat'ED asyncFns have args
 */
 
+export * from "./allMatches.js";
 export * from "./allowsDirectComparison/index.js"
 export * from "./assert/index.js"
 export * from "./instanceOf/index.js";
@@ -38,7 +39,7 @@ export * from "./cfg/index.js";
 
     // type KeysInPrettyMap = keyof typeof import ("./labels/index.js")["VAL_IDEN_TO_PRETTY_MAP"];
     // import type { ValIden } from "felixtypes";
+    // /** ValIdens without a pretty */
     // type MissingFromPrettyMap = Exclude<ValIden, KeysInPrettyMap>;
-
     // /** note: this isn't *quite* accurate, since what it does is check the "getIsValidator" fn; however that fn will error if it is missing any ValIdens */
     // type IsFunctionsWithoutValIden = Exclude<IsFunctions, IsFunctionsMappedToValIden | "isNonEmpty" | "isNonNullable" | "mapHasKey" | "getIsValidator" | "_INTERNAL_GET_IS_IDEN">;

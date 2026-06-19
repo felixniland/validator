@@ -49,6 +49,7 @@ export * from "./isTrue.js";
 export * from "./isUL.js";
 export * from "./isUndef.js";
 export * from "./isV4UUID.js";
+export * from "./isVoidEl.js";
 export * from "./isWeakMap.js";
 export * from "./isWeakSet.js";
 
