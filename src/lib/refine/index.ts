@@ -1,4 +1,4 @@
-import type { GetRelatedValidatorReturn, GetValidatorReturn, NoDuplicatesAllowed, RelatedValidators, ValidatorFn, ValIden } from "felixtypes";
+import type { GetRelatedValidatorReturn, GetValidatorReturn, NoDuplicatesAllowed, RelatedValidators, ValidatorFn, ValIden, NonSymbolPrim } from "felixtypes";
 import { INTERNAL_getValidator } from "$lib/internal/getValidator/index.js";
 
 export {
@@ -60,14 +60,14 @@ function getRelatedRefiner<const T>(v?: T) {
     * I want to expand the 'K' of the Record to have, e.g., "arr"
         * and I call "isArr" before I call "isRelatedRefiner", so I can know which key of the "ALL_RELATED_REFINERS" to call :)
 */
-type EnsureAllMembers<Union extends string, Arr extends ReadonlyArray<string>> = 
+type EnsureAllMembers<Union extends NonSymbolPrim, Arr extends ReadonlyArray<Union>> = 
 	[Union] extends [Arr[number]] 
 		? [Arr[number]] extends [Union] 
 			? Arr 
 			: never
 	: `Missing members in array: ${Exclude<Union, Arr[number]>}`
 
-function allOf<Union extends string>() {
+function allOf<Union extends NonSymbolPrim>() {
 	return function<const Arr extends ReadonlyArray<Union>>(
 		arr: Arr & EnsureAllMembers<Union, Arr> & NoDuplicatesAllowed<Arr>
 	): Arr {

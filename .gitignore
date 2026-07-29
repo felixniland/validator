@@ -25,3 +25,4 @@ vite.config.ts.timestamp-*
 
 # Local package stuff
 .tgz
+validator-0.0.1.tgz

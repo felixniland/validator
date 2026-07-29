@@ -1,7 +1,7 @@
-import { newStrValidator } from "../str/index.js";
+import { newPrimValidator } from "$lib/prim/index.js";
 import { isHtmlEl } from "./isHtmlEl.js";
 
-const isHeaderTag = newStrValidator(['H1', 'H2', 'H3', 'H4', 'H5', 'H6']);
+const isHeaderTag = newPrimValidator(['H1', 'H2', 'H3', 'H4', 'H5', 'H6']);
 
 /** Checks if a value is an HTMLHTMLHeadingElement (H1..H6) */
 export const isHeadingEl = (v: unknown): v is HTMLHeadingElement => {

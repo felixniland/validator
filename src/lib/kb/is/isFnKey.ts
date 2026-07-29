@@ -1,4 +1,4 @@
-import { newStrValidator } from "../../str/index.js";
+import { newPrimValidator } from "$lib/prim/index.js";
 import { FN_KEYS } from "felixtypes";
 
-export const isFnKey = newStrValidator(FN_KEYS);
+export const isFnKey = newPrimValidator(FN_KEYS);

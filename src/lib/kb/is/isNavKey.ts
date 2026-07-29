@@ -1,4 +1,4 @@
-import { newStrValidator } from "../../str/index.js";
+import { newPrimValidator } from "$lib/prim/index.js";
 import { NAV } from "felixtypes";
 
-export const isNavKey = newStrValidator(NAV);
+export const isNavKey = newPrimValidator(NAV);

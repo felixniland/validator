@@ -1,9 +1,9 @@
-import { newStrValidator } from "$lib/str/index.js";
+import { newPrimValidator } from "$lib/prim/index.js";
 import type { VoidElement } from "felixtypes";
 import { isElement } from "./isElement.js";
 
 export {
-    isVoidEl,
+    isVoidEl
 };
 
 /** i.e., self-closing; no children */
@@ -26,7 +26,7 @@ const VOID_ELEMENT_TAGS = [
     "WBR",
 ] as const;
 
-const isVoidElTag = newStrValidator(VOID_ELEMENT_TAGS);
+const isVoidElTag = newPrimValidator(VOID_ELEMENT_TAGS);
 
 /** checks if v is {@link VoidElement} */
 function isVoidEl(v: unknown): v is VoidElement {

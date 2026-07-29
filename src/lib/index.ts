@@ -12,16 +12,12 @@ export * from "./assert/index.js"
 export * from "./instanceOf/index.js";
 export * from "./is/index.js"
 export * from "./kb/index.js";
-export * from "./str/index.js";
-export * from "./refine/index.js";
 export * from "./labels/index.js";
+export * from "./prim/index.js";
+export * from "./refine/index.js";
 
 export * from "./types.js";
 export * from "./cfg/index.js";
-
-
-
-
 
 
 /** checker that there are no missing asserts */

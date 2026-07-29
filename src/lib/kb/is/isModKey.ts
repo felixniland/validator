@@ -1,4 +1,4 @@
+import { newPrimValidator } from "$lib/prim/index.js";
 import { MOD } from "felixtypes";
-import { newStrValidator } from "../../str/index.js";
 
-export const isModKey = newStrValidator(MOD);
+export const isModKey = newPrimValidator(MOD);

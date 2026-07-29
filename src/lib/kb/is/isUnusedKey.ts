@@ -1,4 +1,4 @@
-import { newStrValidator } from "../../str/index.js";
+import { newPrimValidator } from "../../prim/index.js";
 import { UNUSED } from "felixtypes";
 
-export const isUnusedKey = newStrValidator(UNUSED);
+export const isUnusedKey = newPrimValidator(UNUSED);

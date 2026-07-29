@@ -1,4 +1,4 @@
-import { newStrValidator } from "../../str/index.js";
+import { newPrimValidator } from "$lib/prim/index.js";
 import { SPECIAL } from "felixtypes";
 
-export const isSpecialChar = newStrValidator(SPECIAL);
+export const isSpecialChar = newPrimValidator(SPECIAL);

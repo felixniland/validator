@@ -1,4 +1,4 @@
+import { newPrimValidator } from "$lib/prim/index.js";
 import { CLOSE_BRACKET } from "felixtypes";
-import { newStrValidator } from "../../str/index.js";
 
-export const isCloseBracket = newStrValidator(CLOSE_BRACKET);
+export const isCloseBracket = newPrimValidator(CLOSE_BRACKET);
