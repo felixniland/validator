@@ -1,2 +1,2 @@
 /** Checks if v is a symbol */
-export const isSymbol = (v: unknown): v is object => typeof v === "symbol";
+export const isSymbol = (v: unknown): v is symbol => typeof v === "symbol";
