@@ -44,6 +44,7 @@ export * from "./isSpan.js";
 export * from "./isStr.js";
 export * from "./isSvelteMap.js";
 export * from "./isSvelteSet.js";
+export * from "./isStringable.js";
 export * from "./isSymbol.js";
 export * from "./isTrue.js";
 export * from "./isUL.js";

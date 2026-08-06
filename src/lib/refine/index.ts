@@ -90,14 +90,14 @@ type RelatedNumber = Exclude<RelatedValidators<number>, "nonNullable">;
 type RelatedObj = Exclude<RelatedValidators<object>, "v4UUID">;
 
 const ALL_RELATED_REFINERS = {
-    "string": allOf<RelatedStr>()(["dateStr", "digitStr", "str", "v4UUID"]),
-    "bigint": allOf<RelatedBigInt>()(["bigint"]),
-    "boolean": allOf<RelatedBool>()(["bool", "true", "false"]),
+    "string": allOf<RelatedStr>()(["dateStr", "digitStr", "str", "v4UUID", "stringable"]),
+    "bigint": allOf<RelatedBigInt>()(["bigint", "stringable"]),
+    "boolean": allOf<RelatedBool>()(["bool", "true", "false", "stringable"]),
     "function": allOf<RelatedFn>()(["asyncFn", "fn", "obj"]),
-    "object": allOf<RelatedObj>()(["weakSet", "weakMap", "ul", "svelteSet", "svelteMap", "set", "regExp", "promise", "ol", "obj", "node", "map", "listItem", "listEl", "inputEl", "headingEl", "htmlEl", "formEl", "fn", "err", "el", "digitStr", "dateStr", "date", "contentEditable", "blockEl", "asyncFn", "arrUndef", "arrStr", "arrObj", "arrNum", "arrNull", "arrFn", "arrBool", "arrArr", "arr", "textNode", "emptyTextNode", "BR", "span", "voidEl"]), // "nonEmpty", "nonNullable"
+    "object": allOf<RelatedObj>()(["weakSet", "weakMap", "ul", "svelteSet", "svelteMap", "set", "regExp", "promise", "ol", "obj", "node", "map", "listItem", "listEl", "inputEl", "headingEl", "htmlEl", "formEl", "fn", "err", "el", "digitStr", "dateStr", "date", "contentEditable", "blockEl", "asyncFn", "arrUndef", "arrStr", "arrObj", "arrNum", "arrNull", "arrFn", "arrBool", "arrArr", "arr", "textNode", "emptyTextNode", "BR", "span", "voidEl", "nonNullable"]), // "nonEmpty"
     "symbol": allOf<RelatedSymbol>()(["symbol"]),
-    "undefined": allOf<RelatedUndef>()(["undef"]),
-    "number": allOf<RelatedNumber>()(["boolNum", "compNum", "num"]),
+    "undefined": allOf<RelatedUndef>()(["undef", "stringable"]),
+    "number": allOf<RelatedNumber>()(["boolNum", "compNum", "num", "stringable"]),
 } as const satisfies {
     [K in JsTypes]: ReadonlyArray<ValIden>;
 };

@@ -67,7 +67,8 @@ const GET_IS_IDEN = {
     span: "isSpan",
     v4UUID: "isV4UUID",
     voidEl: "isVoidEl",
-    // nonNullable: "isNonNullable",
+    nonNullable: "isNonNullable",
+    stringable: "isStringable",
     // nonEmpty: "isNonEmpty",
 } as const satisfies Record<
     ValIden,

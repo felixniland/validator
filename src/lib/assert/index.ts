@@ -60,6 +60,7 @@ export * from "./assertRegExp.js";
 export * from "./assertSet.js";
 export * from "./assertSpan.js";
 export * from "./assertStr.js";
+export * from "./assertStringable.js";
 export * from "./assertSymbol.js";
 export * from "./assertSvelteMap.js";
 export * from "./assertSvelteSet.js";

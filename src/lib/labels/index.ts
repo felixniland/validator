@@ -62,7 +62,8 @@ const VAL_IDEN_TO_PRETTY_MAP = {
     v4UUID: "v4 UUID",
     voidEl: "HTML Void Element",
     // nonEmpty: "Non-Empty Array",
-    // nonNullable: "Non-nullable",
+    nonNullable: "Non-nullable",
+    stringable: "Stringable",
 } as const satisfies Record<ValIden, string>;
 
 // const getPrettyValIden = (l: ValIden): PrettyValIden => VAL_IDEN_TO_PRETTY_MAP[l];
