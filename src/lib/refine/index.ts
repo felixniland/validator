@@ -1,5 +1,6 @@
-import type { GetRelatedValidatorReturn, GetValidatorReturn, NoDuplicatesAllowed, RelatedValidators, ValidatorFn, ValIden, NonSymbolPrim } from "felixtypes";
-import { INTERNAL_getValidator } from "$lib/internal/getValidator/index.js";
+import type { GetRelatedValidatorReturn, GetValidatorReturn, NoDuplicatesAllowed, RelatedValidators, ValidatorFn, ValIden, NonSymbolPrim, ReadonlyNonEmptyArr } from "felixtypes";
+import { INTERNAL_getValidator } from "../internal/getValidator/index.js";
+import { assertNonEmpty } from "../assert/assertNonEmpty.js";
 
 export {
     getRefiner,
@@ -13,15 +14,17 @@ export {
 /**
  * @param refiners spread array of (a) {@link ValIden} and/or (b) TypeGuard functions that take "v: unknown"
  * @returns a Typeguard function that amalgamates "refiners"
+ * @throws if provided "refiners" is empty
+ * @usage note the "Date" example above has the function annotated; TS by design does not infer typeguards, so providing that function without a return type will have it as "(o) => boolean" (and you will get an intellisense error from me)
  * see also {@link getRelatedRefiner}, which takes a type for "V", and only accepts ValIdens/Typeguards that narrow that type
  * @example 'getRefiner("str")' returns '(v: unknown) => v is string'
  * @example 'getRefiner((o): o is Date => o instance of Date))' returns '(o: unknown) => o is Date'
  * @example 'getRefiner("str", (o): o is Date => o instance of Date))' returns '(o: unknown) => o is string | Date'
- * note the "Date" example above has the function annotated; TS by design does not infer typeguards, so providing that function without a return type will have it as "(o) => boolean" (and you will get an intellisense error from me)
 */
-function getRefiner<const T, const VType extends ReadonlyArray<ValIden | ValidatorFn<any, T>>>(
+function getRefiner<const T, const VType extends ReadonlyNonEmptyArr<ValIden | ValidatorFn<any, T>>>(
     ...refiners: VType
 ): (v: unknown) => v is GetValidatorReturn<VType[number]> {
+    assertNonEmpty(refiners);
     const validatorArr = refiners.map((idenOrFn) => INTERNAL_getValidator(idenOrFn));
     // const validatorArr = fnsOrTypes.map((idenOrFn) => getRefiner(idenOrFn as any)); // weirdly, this changed the order of the ReturnType (but nothing else...)
     
@@ -31,14 +34,14 @@ function getRefiner<const T, const VType extends ReadonlyArray<ValIden | Validat
 }
 
 /**
- * @template T
+ * @throws if provided "refiners" is empty
  * @param refiners spread array of (a) {@link ValIden} and/or (b) TypeGuard functions that take "v: T"
  * @returns a Typeguard function that amalgamates "refiners"
  * see also {@link getRefiner}, which does not take a type for V (returns "v: unknown: v is...")
  * @example 'getRefiner<string>()("dateStr", "digitStr")' returns '(v: string) => v is DateStr | DigitStr'
 */
 function getRelatedRefiner<const T>(v?: T) {
-    return function provideRefiners<const RType extends T, const VType extends ReadonlyArray<RelatedValidators<T> | ValidatorFn<RType, T>>>(
+    return function provideRefiners<const RType extends T, const VType extends ReadonlyNonEmptyArr<RelatedValidators<T> | ValidatorFn<RType, T>>>(
         ...refiners: VType
     // @ts-expect-error(TODO: it is technically correct in that, e.g., "string does not extend Pokemon"; but in runtime, the value IS a Pokemon, and it's just loosely-typed as a "string", hence we are narrowing... so I'm not sure what the best practice is here)
     ): (v: T) => v is GetRelatedValidatorReturn<T, RType, VType> {
@@ -94,7 +97,7 @@ const ALL_RELATED_REFINERS = {
     "bigint": allOf<RelatedBigInt>()(["bigint", "stringable"]),
     "boolean": allOf<RelatedBool>()(["bool", "true", "false", "stringable"]),
     "function": allOf<RelatedFn>()(["asyncFn", "fn", "obj"]),
-    "object": allOf<RelatedObj>()(["weakSet", "weakMap", "ul", "svelteSet", "svelteMap", "set", "regExp", "promise", "ol", "obj", "node", "map", "listItem", "listEl", "inputEl", "headingEl", "htmlEl", "formEl", "fn", "err", "el", "digitStr", "dateStr", "date", "contentEditable", "blockEl", "asyncFn", "arrUndef", "arrStr", "arrObj", "arrNum", "arrNull", "arrFn", "arrBool", "arrArr", "arr", "textNode", "emptyTextNode", "BR", "span", "voidEl", "nonNullable"]), // "nonEmpty"
+    "object": allOf<RelatedObj>()(["nonEmpty", "weakSet", "weakMap", "ul", "svelteSet", "svelteMap", "set", "regExp", "promise", "ol", "obj", "node", "map", "listItem", "listEl", "inputEl", "headingEl", "htmlEl", "formEl", "fn", "err", "el", "digitStr", "dateStr", "date", "contentEditable", "blockEl", "asyncFn", "arrUndef", "arrStr", "arrObj", "arrNum", "arrNull", "arrFn", "arrBool", "arrArr", "arr", "textNode", "emptyTextNode", "BR", "span", "voidEl", "nonNullable"]), // "nonEmpty"
     "symbol": allOf<RelatedSymbol>()(["symbol"]),
     "undefined": allOf<RelatedUndef>()(["undef", "stringable"]),
     "number": allOf<RelatedNumber>()(["boolNum", "compNum", "num", "stringable"]),

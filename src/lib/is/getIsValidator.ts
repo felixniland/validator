@@ -69,7 +69,7 @@ const GET_IS_IDEN = {
     voidEl: "isVoidEl",
     nonNullable: "isNonNullable",
     stringable: "isStringable",
-    // nonEmpty: "isNonEmpty",
+    nonEmpty: "isNonEmpty",
 } as const satisfies Record<
     ValIden,
     keyof Omit<typeof IsIndividual, "createIsIden" | "getIsValidator" | "ALL_IS">

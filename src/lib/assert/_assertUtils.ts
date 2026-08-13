@@ -4,7 +4,7 @@ import { getIsValidator } from "../is/index.js";
 
 type GetExpectedMsg<TIden extends ValIden> = ReturnType<typeof getExpectedMsg<TIden>>;
 
-export function getExpectedMsg<const TIden extends ValIden>(iden: TIden) {
+function getExpectedMsg<const TIden extends ValIden>(iden: TIden) {
     return `expected ${VAL_IDEN_TO_PRETTY_MAP[iden]}` as const;
 }
 
@@ -21,6 +21,5 @@ export function getStdAsserter<const K extends ValIden>(type: K) {
         if (!refiner(v)) throw new Error(errMsg || defaultErrMsg);
     }
 
-    const ret = asserter;
-    return ret;
+    return asserter;
 }

@@ -13,6 +13,7 @@
 // }
 
 export * from "./assertCondition/index.js";
+export * from "./assertArrIsLen/index.js";
 
 export * from "./assertArr.js";
 export * from "./assertArrArr.js";

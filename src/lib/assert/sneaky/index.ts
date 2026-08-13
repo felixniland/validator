@@ -1,10 +1,6 @@
 import type { ValIden, ValidatorFn, GetValidatorReturn } from "felixtypes";
 import { getRefiner } from "$lib/refine/index.js";
 
-export {
-    sneakyAsserter as WIP_DO_NOT_EXPORT_sneakyAsserter,
-}
-
 /**
  * @template T
  * utility to create a dynamic asserter

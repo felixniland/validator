@@ -25,7 +25,7 @@ export * from "./cfg/index.js";
     // type IsFunctions = keyof typeof import ("./is/index.js");
     // type AsserterFunctions = keyof typeof import("./assert/index.js");
     // type TypeGuards = CutStrPrefix<IsFunctions, "is">; // i.e., this will exclude "getIsValidator"
-    // type Asserters = CutStrPrefix<AsserterFunctions, "assert">;
+    // type Asserters = Exclude<CutStrPrefix<AsserterFunctions, "assert">, "ArrIsLen">; // exclude "ArrIsLen", which does not have an "is", and also this excludes the "assertCondition" fn, since it is exported as "ASSERT"
 
     // /** exclude 'MapHasKey' explicitly since it does not match the 'is' prefix above */
     // type AsserterWithNoIs = Exclude<Asserters, TypeGuards | "MapHasKey">;
