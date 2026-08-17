@@ -10,6 +10,7 @@
 export * from "./allMatches.js";
 export * from "./allowsDirectComparison/index.js"
 export * from "./assert/index.js"
+export * from "./ensure/index.js";
 export * from "./instanceOf/index.js";
 export * from "./is/index.js"
 export * from "./kb/index.js";
