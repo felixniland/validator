@@ -1,4 +1,4 @@
-import { isValIden, VAL_IDEN_TO_PRETTY_MAP } from "$lib/labels/index.js";
+import { isValIden, VAL_IDEN_TO_PRETTY_MAP } from "../../labels/index.js";
 import type { ValIden, ValidatorFn } from "felixtypes";
 
 export {

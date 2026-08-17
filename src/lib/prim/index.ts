@@ -13,7 +13,7 @@ function newPrimValidator<T extends NonSymbolPrim>(arr: NonEmptyArr<T>) {
     if (!arr.length) throw new Error("newStrValidator received empty array");
     const set = new Set(arr);
 
-    return (val: unknown): val is T => set.has(val as any);
+    return (val: unknown): val is T => (set as Set<unknown>).has(val);
 }
 
 /**

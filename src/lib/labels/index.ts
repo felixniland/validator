@@ -65,13 +65,3 @@ const VAL_IDEN_TO_PRETTY_MAP = {
     nonNullable: "Non-nullable",
     stringable: "Stringable",
 } as const satisfies Record<ValIden, string>;
-
-// const getPrettyValIden = (l: ValIden): PrettyValIden => VAL_IDEN_TO_PRETTY_MAP[l];
-// const getPrettyAssertsValIden = (l: AssertsValIden): PrettyValIden => VAL_IDEN_TO_PRETTY_MAP[toCamelCase(l.slice(7)) as ValIden];
-// const getPrettyIsValIden = (l: IsValIden): PrettyValIden => VAL_IDEN_TO_PRETTY_MAP[toCamelCase(l.slice(2)) as ValIden];
-
-// const findPrettyValIden = (label: ValIden | IsValIden | AssertsValIden): PrettyValIden => {
-// 	if (label.startsWith("is")) return getPrettyValIden(label as any);
-// 	if (label.startsWith("asserts")) return getPrettyAssertsValIden(label as any);
-// 	return getPrettyValIden(label as any);
-// }

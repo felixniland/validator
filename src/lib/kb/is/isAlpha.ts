@@ -1,4 +1,4 @@
-import { isVacuousArray } from "$lib/internal/index.js";
+import { isVacuousArray } from "../../internal/index.js";
 import type { Alpha } from "felixtypes";
 
 // this old version of "isAlpha" only works with English // const isAlpha = (str: string): str is Alpha => str.length === 1 && /^[a-zA-Z]$/.test(str);

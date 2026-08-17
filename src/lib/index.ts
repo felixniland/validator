@@ -1,6 +1,7 @@
 /**
  * TODO:
     * []: 'felixtypes': update the 'GetRefiner' and so on to pass the input value to "isNonNullable" && "isNonEmpty", so that I can put them back in as ValIdenz without them widening to "any"; the same would be great for Map, Set, etc, too
+    * []: 'felixtypes': many types in 'GetRelatedValidatorReturn', or their own return type, will lose their genericity[sic] - e.g., "nonEmpty" retains, but "isArr" doesn't, nor does "object", etc...
     * []: "isPosNum" (> 0...)
     * []: make "getAsserter" and "getRelatedAsserter", same as for refiners...
     * []: "isAsyncFn" returns "(...args?: any)", but I'd rather it return a spread; however, a spread cannot be optional. Not sure how to properly do this without it mandating that validat'ED asyncFns have args
@@ -18,7 +19,6 @@ export * from "./refine/index.js";
 
 export * from "./types.js";
 export * from "./cfg/index.js";
-
 
 /** checker that there are no missing asserts */
     // type CutStrPrefix<S extends string, P extends string> = S extends `${P}${infer Rest}` ? Rest : never;

@@ -19,13 +19,29 @@ export {
     }
  * ```
  */
-function mapHasKey<K, V, const TSpecificKey extends K>(map: Map<K, V>, key: TSpecificKey): map is Omit<Map<K, V>, "get"> & {
+function mapHasKey<K, V, const TSpecificKey extends K>(map: Map<K, V>, key: TSpecificKey): map is Omit<Map<K, V>, "get" | "delete"> & {
     get(key: TSpecificKey): V;
     get(key: Exclude<K, TSpecificKey>): V | undefined;
+    // there is no 'delete: thisKey" method, as that would allow you to enter it; the below signature means it errors if you try to delete TSpecificKey
+    delete(key: Exclude<K, TSpecificKey>): boolean;
+    // this is not-obvious... if you are just calling it, you don't see the return value...
+    // clear(): never;
 } {
     return map.has(key);
 }
 
+// const someMap = new Map<"a" | "b" | "c", number>();
+
+// someMap.set("a", 1);
+// someMap.set("b", 2);
+// someMap.set("c", 3);
+
+// if (mapHasKey(someMap, "a")) {
+//     someMap;
+//     const cleared = someMap.clear();
+//     // const what = someMap.get("a");
+//     // const deleted = someMap.delete("a");
+// }
 
 
 
@@ -33,14 +49,15 @@ function mapHasKey<K, V, const TSpecificKey extends K>(map: Map<K, V>, key: TSpe
 
 
 
-// TODO: from 'TypedRocks' on Youtube <3 // works, but doesn't handle 'clear / delete', so... gotta think on it...
+
+// T ODO: from 'TypedRocks' on Youtube <3 // works, but doesn't handle 'clear / delete', so... gotta think on it...
 
             // declare const __marker: unique symbol;
             // type Marker = {[__marker]: 'Marker'};
 
             // interface TypeSafeMap<K, V> extends Omit<Map<K, V>, "has" | "get"> {
             //     // clear(): void; // this does not 'un-validate' a key
-            //     // delete(key: K): boolean; // TODO: this does not 'un-validate' a key
+            //     // delete(key: K): boolean; // T ODO: this does not 'un-validate' a key
             //     has(key: K): key is K & Marker;
             //     get<PossiblyMarked extends K>(key: PossiblyMarked): PossiblyMarked extends Marker ? V : V | undefined;
             // }
@@ -87,7 +104,7 @@ function mapHasKey<K, V, const TSpecificKey extends K>(map: Map<K, V>, key: TSpe
 // function testSvelteMap() {
 //     const someKey = "someKey" as const;
 //     const bla = new BetterSvelteMap<string, number>(); // with the 'overridden' constructor
-//     // const bla = new SvelteMap<string, number>() as unknown as TypeSafeSvelteMap<string, number>;
+//     // const bla = new SvelteMap<string, number>() as u nknown as TypeSafeSvelteMap<string, number>;
 
 //     if (bla.has(someKey)) {
 //         const val = bla.get(someKey);

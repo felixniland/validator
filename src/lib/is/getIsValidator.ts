@@ -1,17 +1,17 @@
 import * as IsIndividual from "./index.js";
 import type { ValIden } from "felixtypes";
 
-/**
- * Gets the validator function for a given ValIden.
- * @param val - The ValIden to get the validator for
- * @returns The validator function
- */
-const getIsValidator = <I extends ValIden>(val: I) => IsIndividual[GET_IS_IDEN[val]];
-
 export {
     GET_IS_IDEN as _INTERNAL_GET_IS_IDEN,
-    getIsValidator
 }
+
+// // internally, this has been replaced with direct calls to 'isIndividual', but it's used by some things in 'utils'... in ways where, I think, they should use 'getRefiner'...
+//     /**
+//      * Gets the validator function for a given ValIden.
+//      * @param val - The ValIden to get the validator for
+//      * @returns The validator function
+//      */
+//     const getIsValidator = <I extends ValIden>(val: I) => IsIndividual[GET_IS_IDEN[val]];
 
 const GET_IS_IDEN = {
     arr: "isArr",

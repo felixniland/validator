@@ -1,6 +1,6 @@
 import type { ValIden, GetValidatorReturn, ValidatorFn } from "felixtypes";
 import { getErrMsg } from "./getErrMsg.js";
-import { INTERNAL_getValidator } from "$lib/internal/getValidator/index.js";
+import { getRefiner } from "../../refine/index.js";
 
 // this works wonderfully, but requires manually type-ing the output, per TS's asserter conditions...
 
@@ -35,12 +35,11 @@ import { INTERNAL_getValidator } from "$lib/internal/getValidator/index.js";
 */
 function getAsserter<const VType extends ReadonlyArray<ValIden | ValidatorFn<any, unknown>>>(...refiners: VType) {
     type Asserted = GetValidatorReturn<VType[number]>;
-    const defaultErrMsg = getErrMsg(...refiners as any);
+    const defaultErrMsg = getErrMsg(...refiners);
 
-    const validatorArr = refiners.map((idenOrFn) => INTERNAL_getValidator(idenOrFn));
-    const refiner = (v: unknown) => validatorArr.some((validator) => (validator as any)(v));
+    // @ts-expect-error(2556: A spread argument must either have a tuple type or be passed to a rest parameter)
+    const refiner = getRefiner(...refiners);
    
-    // function asserter<const TErrMsg extends string>(v: unknown, errMsg?: TErrMsg): asserts v is Asserted {
     function asserter(v: unknown): asserts v is Asserted {
         // if (!refiner(v)) throw new Error(errMsg || defaultErrMsg);
         if (!refiner(v)) throw new Error(defaultErrMsg);

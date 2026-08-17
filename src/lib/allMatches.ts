@@ -1,6 +1,7 @@
+import * as IsIndividual from "./is/index.js";
 import type { ValIden } from "felixtypes";
 import { VAL_IDEN_TO_PRETTY_MAP } from "./labels/index.js";
-import { getIsValidator } from "./is/getIsValidator.js";
+import { _INTERNAL_GET_IS_IDEN } from "./is/getIsValidator.js";
 
 export {
     getAllMatchingTypes,
@@ -13,5 +14,11 @@ const VAL_IDENS = Object.keys(VAL_IDEN_TO_PRETTY_MAP) as Array<keyof typeof VAL_
  * this is a run-time check: i.e., it has no generics on it, and does not narrow
 */
 function getAllMatchingTypes(v: unknown): Array<ValIden> {
-    return VAL_IDENS.filter((iden) => getIsValidator(iden)(v));
+    const ret: Array<ValIden> = [];
+
+    for (const iden of VAL_IDENS) {
+        if (IsIndividual[_INTERNAL_GET_IS_IDEN[iden]]) ret.push(iden);
+    }
+
+    return ret;
 }

@@ -1,10 +1,7 @@
 import type { MutNonEmptyArr, ReadonlyNonEmptyArr } from "felixtypes";
 import { isUndef } from "./isUndef.js";
 
-/**
- * TODO:
-    * []: have this work for Sets & Maps - need to create type/s first :)
- */
+/** NTS: hmm, I I've thought to include Sets and Maps (whether in this, or in a separate function), but the need for it doesn't seem to come up in my code..., and it doesn't lend itself usefully, like how you can call "!nonEmptyArr.pop()" with confidence... */
 
 export {
     isNonEmpty

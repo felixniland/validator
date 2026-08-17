@@ -21,7 +21,6 @@ function isStringable(v: unknown): v is Stringable {
             return isNull(v);
         default:
             return false;
-    
             
         // case "symbol": // NTS: String(Symbol("hello")) returns `Symbol("hello")`
         // case "function": // can just stringify it directly; or return its name, if it has one

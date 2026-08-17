@@ -1,4 +1,4 @@
-import { isNonEmpty } from "$lib/is/index.js";
+import { isNonEmpty } from "../is/index.js";
 import type { ReadonlyNonEmptyArr, MutNonEmptyArr } from "felixtypes";
 
 export {

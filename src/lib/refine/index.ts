@@ -1,14 +1,14 @@
-import type { GetRelatedValidatorReturn, GetValidatorReturn, NoDuplicatesAllowed, RelatedValidators, ValidatorFn, ValIden, NonSymbolPrim, ReadonlyNonEmptyArr } from "felixtypes";
+import type { GetValidatorReturn, NoDuplicatesAllowed, RelatedValidators, ValidatorFn, ValIden, NonSymbolPrim, ReadonlyNonEmptyArr } from "felixtypes";
 import { INTERNAL_getValidator } from "../internal/getValidator/index.js";
 import { assertNonEmpty } from "../assert/assertNonEmpty.js";
 
 export {
     getRefiner,
-    getRelatedRefiner,
 }
 
 /**
  * TODO: "isRelatedRefiner" validator fn - see notes below
+ * NTS: stopped exporting 'getRefiner', since inevitably wherever it's used - i.e., Match, Opt - there is typecasting anyway, so just using 'getRefiner' is fine :)
 */
 
 /**
@@ -25,29 +25,31 @@ function getRefiner<const T, const VType extends ReadonlyNonEmptyArr<ValIden | V
     ...refiners: VType
 ): (v: unknown) => v is GetValidatorReturn<VType[number]> {
     assertNonEmpty(refiners);
-    const validatorArr = refiners.map((idenOrFn) => INTERNAL_getValidator(idenOrFn));
-    // const validatorArr = fnsOrTypes.map((idenOrFn) => getRefiner(idenOrFn as any)); // weirdly, this changed the order of the ReturnType (but nothing else...)
+    const validatorArr = refiners.map(INTERNAL_getValidator);
+
+    /** return early if they've only requested a single refiner */
+    if (validatorArr.length === 1) return (validatorArr.pop()!) as ((v: unknown) => v is GetValidatorReturn<VType[number]>);
     
     return function validator(v: unknown): v is GetValidatorReturn<VType[number]> {
-        return validatorArr.some((validator) => (validator as any)(v));
+        return validatorArr.some((validator) => validator(v));
     }
 }
 
-/**
- * @throws if provided "refiners" is empty
- * @param refiners spread array of (a) {@link ValIden} and/or (b) TypeGuard functions that take "v: T"
- * @returns a Typeguard function that amalgamates "refiners"
- * see also {@link getRefiner}, which does not take a type for V (returns "v: unknown: v is...")
- * @example 'getRefiner<string>()("dateStr", "digitStr")' returns '(v: string) => v is DateStr | DigitStr'
-*/
-function getRelatedRefiner<const T>(v?: T) {
-    return function provideRefiners<const RType extends T, const VType extends ReadonlyNonEmptyArr<RelatedValidators<T> | ValidatorFn<RType, T>>>(
-        ...refiners: VType
-    // @ts-expect-error(TODO: it is technically correct in that, e.g., "string does not extend Pokemon"; but in runtime, the value IS a Pokemon, and it's just loosely-typed as a "string", hence we are narrowing... so I'm not sure what the best practice is here)
-    ): (v: T) => v is GetRelatedValidatorReturn<T, RType, VType> {
-        return getRefiner(...refiners as any);
-    }
-}
+// /**
+//  * @throws if provided "refiners" is empty
+//  * @param refiners spread array of (a) {@link ValIden} and/or (b) TypeGuard functions that take "v: T"
+//  * @returns a Typeguard function that amalgamates "refiners"
+//  * see also {@link getRefiner}, which does not take a type for V (returns "v: unknown: v is...")
+//  * @example 'getRefiner<string>()("dateStr", "digitStr")' returns '(v: string) => v is DateStr | DigitStr'
+// */
+// function getRelatedRefiner<const T>(v?: T) {
+//     return function provideRefiners<const RType extends T, const VType extends ReadonlyNonEmptyArr<RelatedValidators<T> | ValidatorFn<RType, T>>>(
+//         ...refiners: VType
+//     // @ts-expect-error(TODO: it is technically correct in that, e.g., "string does not extend Pokemon"; but in runtime, the value IS a Pokemon, and it's just loosely-typed as a "string", hence we are narrowing... so I'm not sure what the best practice is here)
+//     ): (v: T) => v is GetRelatedValidatorReturn<T, RType, VType> {
+//         return getRefiner(...refiners as a ny);
+//     }
+// }
 
 
 

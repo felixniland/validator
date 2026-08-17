@@ -1,4 +1,4 @@
-import { newPrimValidator } from "$lib/prim/index.js";
+import { newPrimValidator } from "../prim/index.js";
 import { isHtmlEl } from "./isHtmlEl.js";
 
 const isHeaderTag = newPrimValidator(['H1', 'H2', 'H3', 'H4', 'H5', 'H6']);

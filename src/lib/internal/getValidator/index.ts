@@ -1,7 +1,7 @@
 import type { ValIden, ValidatorFn } from "felixtypes";
 import * as IsIndividual from "../../is/index.js";
-import { getIsValidator } from "$lib/is/index.js";
-import { isValIden } from "$lib/labels/index.js";
+import { isValIden } from "../../labels/index.js";
+import { _INTERNAL_GET_IS_IDEN } from "$lib/is/getIsValidator.js";
 
 export {
     INTERNAL_getValidator
@@ -15,7 +15,7 @@ export {
  * @throws if 'validator' is neither ValIden, nor a Function
 */
 function INTERNAL_getValidator(validator: ValIden | ValidatorFn<any, any>): ValidatorFn<any, any> {
-    if (isValIden(validator)) return getIsValidator(validator);
+    if (isValIden(validator)) return IsIndividual[_INTERNAL_GET_IS_IDEN[validator]];
     if (IsIndividual.isFn(validator)) {
         // testing... TODO: need to put under devFlag
             // if (!(validator.length)) throw new Error("expected validator to have args.length of 1");
@@ -26,5 +26,5 @@ function INTERNAL_getValidator(validator: ValIden | ValidatorFn<any, any>): Vali
         return validator as ValidatorFn<any>;
     }
     
-    throw new Error("expected valIden or function");
+    throw new Error("expected ValIden or function");
 }

@@ -1,4 +1,4 @@
-import { newPrimValidator } from "$lib/prim/index.js";
+import { newPrimValidator } from "../prim/index.js";
 import type { VoidElement } from "felixtypes";
 import { isElement } from "./isElement.js";
 

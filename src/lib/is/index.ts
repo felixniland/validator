@@ -57,6 +57,3 @@ export * from "./isWeakSet.js";
 /** non-val idens */
 export * from "./mapHasKey.js";
 export * from "./isNonEmpty.js";
-
-/** utils */
-export { getIsValidator } from "./getIsValidator.js";

@@ -1,34 +1,39 @@
-import type { RelatedValidators, GetRelatedValidatorReturn, ValidatorFn } from "felixtypes";
-import { getErrMsg } from "./getErrMsg.js";
-import { INTERNAL_getValidator } from "$lib/internal/getValidator/index.js";
-
 /**
- * @template T
- * @param refiners spread array of (a) {@link ValIden} and/or (b) TypeGuard functions that take "v: T"
- * @returns an asserter of the amalgamated refiners
- * @see {@link getAsserter}, which does not take a type for V (returns "v: unknown: asserts v is...")
- * @see {@link getAsserter} for more notes, incl. on the default errMsg / providing your own
- * @example 'getAsserter<string>()("dateStr", "digitStr")' returns '(v: string) => asserts v is DateStr | DigitStr'
+ * this works fine, but has not been tested
+ * and really, it should just be a wrapped around 'getAsserter/s', with the lil bit of extra TS stuff. This is overengineered!
 */
-const getRelatedAsserter = <const T>() => {
-    const provideRefiners = <const RType extends T, const VType extends ReadonlyArray<RelatedValidators<T> | ValidatorFn<RType, T>>>(
-        ...refiners: VType
-    ) => {
-        type Asserted = GetRelatedValidatorReturn<T, RType, VType>;
 
-        const defaultErrMsg = getErrMsg(...refiners as any);
+// import type { RelatedValidators, GetRelatedValidatorReturn, ValidatorFn } from "felixtypes";
+// import { getErrMsg } from "./getErrMsg.js";
+// import { INTERNAL_getValidator } from "../../internal/getValidator/index.js";
+
+// /**
+//  * @template T
+//  * @param refiners spread array of (a) {@link ValIden} and/or (b) TypeGuard functions that take "v: T"
+//  * @returns an asserter of the amalgamated refiners
+//  * @see {@link getAsserter}, which does not take a type for V (returns "v: unknown: asserts v is...")
+//  * @see {@link getAsserter} for more notes, incl. on the default errMsg / providing your own
+//  * @example 'getAsserter<string>()("dateStr", "digitStr")' returns '(v: string) => asserts v is DateStr | DigitStr'
+// */
+// const getRelatedAsserter = <const T>() => {
+//     const provideRefiners = <const RType extends T, const VType extends ReadonlyArray<RelatedValidators<T> | ValidatorFn<RType, T>>>(
+//         ...refiners: VType
+//     ) => {
+//         type Asserted = GetRelatedValidatorReturn<T, RType, VType>;
+
+//         const defaultErrMsg = getErrMsg(...refiners as a ny);
         
-        const validatorArr = refiners.map((idenOrFn) => INTERNAL_getValidator(idenOrFn));
-        const refiner = (v: T) => validatorArr.some((validator) => (validator as any)(v));
+//         const validatorArr = refiners.map((idenOrFn) => INTERNAL_getValidator(idenOrFn));
+//         const refiner = (v: T) => validatorArr.some((validator) => (validator as a ny)(v));
 
-        // @ts-expect-error ("A type predicate's type must be assignable to its parameter's type...")
-        function asserter<const TErrMsg extends string>(v: T, errMsg?: TErrMsg): asserts v is Asserted {
-            if (!refiner(v)) throw new Error(errMsg || defaultErrMsg);
-        }
+//         // @ts-expect-error ("A type predicate's type must be assignable to its parameter's type...")
+//         function asserter<const TErrMsg extends string>(v: T, errMsg?: TErrMsg): asserts v is Asserted {
+//             if (!refiner(v)) throw new Error(errMsg || defaultErrMsg);
+//         }
 
-        return asserter;
+//         return asserter;
 
-    }
+//     }
 
-    return provideRefiners;
-}
+//     return provideRefiners;
+// }

@@ -1,7 +1,7 @@
 import type { ValIden, GetterOr, GetValidatorReturn, ValidatorFn } from "felixtypes";
-import { isValIden } from "$lib/labels/index.js";
-import { isBool, isFn, isStr, isTrue} from "$lib/is/index.js";
-import { getRefiner } from "$lib/refine/index.js";
+import { isValIden } from "../../labels/index.js";
+import { isBool, isFn, isStr, isTrue} from "../../is/index.js";
+import { getRefiner } from "../../refine/index.js";
 import { getErrMsg } from "../get/getErrMsg.js";
 
 /**
