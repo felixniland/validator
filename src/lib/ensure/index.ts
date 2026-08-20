@@ -1,7 +1,7 @@
-import { dev } from "$app/env";
 import type { GetRelatedValidatorReturn, RelatedValidators } from "felixtypes";
 import { getErrMsg } from "../assert/get/getErrMsg.js";
 import { getRefiner } from "../refine/index.js";
+import { DEV } from "esm-env";
 
 /**
  * TODO:
@@ -50,7 +50,7 @@ function ensure<
     // @ts-expect-error(2322: ReturnType is not assignable to...)
     if (getRefiner(iden)(val)) return val;
     if (getDefault) {
-        if (devWarnOnDefault && dev) console.warn("ensure received val", val, `but returning getDefault(), because ${getErrMsg(iden)}`);
+        if (devWarnOnDefault && DEV) console.warn("ensure received val", val, `but returning getDefault(), because ${getErrMsg(iden)}`);
         return getDefault();
     }
     throw new Error(getErrMsg(iden));
@@ -68,7 +68,7 @@ function getEnsurer<TIden extends RelatedValidators<TVal>, TVal>(iden: TIden, ge
         // @ts-expect-error(2322: ReturnType is not assignable to...)
         if (refiner(val)) return val;
         if (getDefaultOverride) {
-            if (devWarnOnDefault && dev) console.warn("ensure received val", val, `but returning getDefault(), because ${errMsg}`);
+            if (devWarnOnDefault && DEV) console.warn("ensure received val", val, `but returning getDefault(), because ${errMsg}`);
             return getDefaultOverride();
         }
         throw new Error(errMsg);
