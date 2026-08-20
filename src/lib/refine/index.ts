@@ -8,6 +8,7 @@ export {
 
 /**
  * TODO: "isRelatedRefiner" validator fn - see notes below
+    * []: it has the BrandedTypes in the "object" Array, which is incorrect!
  * NTS: stopped exporting 'getRefiner', since inevitably wherever it's used - i.e., Match, Opt - there is typecasting anyway, so just using 'getRefiner' is fine :)
 */
 
@@ -99,7 +100,7 @@ const ALL_RELATED_REFINERS = {
     "bigint": allOf<RelatedBigInt>()(["bigint", "stringable"]),
     "boolean": allOf<RelatedBool>()(["bool", "true", "false", "stringable"]),
     "function": allOf<RelatedFn>()(["asyncFn", "fn", "obj"]),
-    "object": allOf<RelatedObj>()(["nonEmpty", "weakSet", "weakMap", "ul", "svelteSet", "svelteMap", "set", "regExp", "promise", "ol", "obj", "node", "map", "listItem", "listEl", "inputEl", "headingEl", "htmlEl", "formEl", "fn", "err", "el", "digitStr", "dateStr", "date", "contentEditable", "blockEl", "asyncFn", "arrUndef", "arrStr", "arrObj", "arrNum", "arrNull", "arrFn", "arrBool", "arrArr", "arr", "textNode", "emptyTextNode", "BR", "span", "voidEl", "nonNullable"]), // "nonEmpty"
+    "object": allOf<RelatedObj>()(["nonEmpty", "weakSet", "weakMap", "ul", "svelteSet", "svelteMap", "set", "regExp", "promise", "ol", "obj", "node", "map", "listItem", "listEl", "inputEl", "headingEl", "htmlEl", "formEl", "fn", "err", "el", "dateStr", "date", "contentEditable", "blockEl", "asyncFn", "arrUndef", "arrStr", "arrObj", "arrNum", "arrNull", "arrFn", "arrBool", "arrArr", "arr", "textNode", "emptyTextNode", "BR", "span", "voidEl", "nonNullable"]), // "nonEmpty"
     "symbol": allOf<RelatedSymbol>()(["symbol"]),
     "undefined": allOf<RelatedUndef>()(["undef", "stringable"]),
     "number": allOf<RelatedNumber>()(["boolNum", "compNum", "num", "stringable"]),
