@@ -1,7 +1,7 @@
 import type { ValIden, InferValidatedType, AutoCompleteStr as DefaultMsg } from "felixtypes";
 import { VAL_IDEN_TO_PRETTY_MAP } from "../labels/index.js";
 import * as IsIndividual from "../is/index.js";
-import { _INTERNAL_GET_IS_IDEN } from "$lib/is/getIsValidator.js";
+import { _INTERNAL_GET_IS_IDEN } from "../is/getIsValidator.js";
 
 export {
     getStdAsserter

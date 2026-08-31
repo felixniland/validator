@@ -1,5 +1,7 @@
 import { dev } from "$app/env";
-import type { GetRelatedValidatorReturn, RelatedValidators } from "felixtypes";
+import { INTERNAL_getValidator } from "../internal/index.js";
+import { type GetRelatedValidatorReturn, type GetValidatorReturn, type ReadonlyNonEmptyArr, type RelatedValidators, type ValidatorFn } from "felixtypes";
+import { assertNonEmpty } from "../assert/assertNonEmpty.js";
 import { getErrMsg } from "../assert/get/getErrMsg.js";
 import { getRefiner } from "../refine/index.js";
 
@@ -23,37 +25,55 @@ import { getRefiner } from "../refine/index.js";
             * ... so VERY negligible for the way I do it
 */
 
-// export {
-//     ensure,
-//     getEnsurer,
-// };
+export {
+    ensure
+};
+
+// /**
+//      * takes a spread array of either Typeguards (that are applicable to the inner value), or, the related validators from the "validator" lib
+//      * @example Match("some str").refine("str")... // since "some str" is tightly inferred, the intellisense only suggests "str"
+//      * @example Match.loose("some str").refine("str", "digitStr", "dateStr")... // with Match.loose, the type is broadened; the intellisense will suggest these validators, and error if you overwrite a non-compatible one, e.g., '.refine("null")'
+//      * @example Match.loose("some str").refine("str", (v: string): string is MagicStr => ["magic", "gems"].includes(v as any)) // example of providing a validator fn, along with an inbuilt one
+//     */
+//     const refine = <
+//         const VType extends ReadonlyNonEmptyArr<Exclude<RelatedValidators<TVal>, TRefineSeen[number]> | ValidatorFn<RType, TVal>>,
+//         /** the ValidatorReturn type */
+//         const VReturn = GetRelatedValidatorReturn<TVal, RType, VType>,
+//         /** this 'extends TEqSeen...' bit stops it from allowing refiners that resolve to a val that's been seen */ 
+//     >(...refiners: VReturn extends TEqSeen[number] ? never : VType) => {
+//         return {} as any;
+//     }
 
 /**
  * Ensures that a value satisfies a given validator identifier.
  * Returns the value if it passes validation, otherwise returns the result of 'getDefault()' if it was provided, otherwise throws an Error.
- * @template TIden - The validator identifier type
+ * @template TIden - The validator identifier type; there are no generics on any ValidatorFns passed to this fn, as TS can be annoying with those :) as with any assert, ensuring is up to you!
+ * @template TIden - There are no generics on any ValidatorFns passed to this fn - as with any assert, ensuring accuracy is up to you!
  * @param iden - The validator identifier to check against
  * @param val - The value to validate
- * @param getDefault - (OPTIONAL) Getter for a default value
  * @returns The validated value, narrowed to the type specified by the identifier
  * @throws if the value does not satisfy the validator
+ * @throws if 'refiners' is empty
+ * you will get undefined behaviour if you pass a sparse array, u disorganised monster
+//  * @param getDefault - (OPTIONAL) Getter for a default value
  */
+// function getRefiner<const T, (
+//     ...refiners: VType
+// ): (v: unknown) => v is GetValidatorReturn<VType[number]> {
 function ensure<
     const TVal,
-    TIden extends RelatedValidators<TVal>
+    const VType extends ReadonlyNonEmptyArr<RelatedValidators<TVal> | ValidatorFn<any, TVal>>
 >(
     val: TVal,
-    iden: TIden,
-    getDefault?: () => NoInfer<GetRelatedValidatorReturn<TVal, TVal, [TIden]>>,
-    devWarnOnDefault?: boolean,
-): GetRelatedValidatorReturn<TVal, TVal, [TIden]> {
-    // @ts-expect-error(2322: ReturnType is not assignable to...)
-    if (getRefiner(iden)(val)) return val;
-    if (getDefault) {
-        if (devWarnOnDefault && dev) console.warn("ensure received val", val, `but returning getDefault(), because ${getErrMsg(iden)}`);
-        return getDefault();
+    ...refiners: VType
+): GetValidatorReturn<VType[number]> {
+    assertNonEmpty(refiners);
+    for (let i = 0; i < refiners.length; i++) {
+        if ((INTERNAL_getValidator(refiners[i]!))(val)) return val as any;
     }
-    throw new Error(getErrMsg(iden));
+
+    // @ts-expect-error(2345: "not assignable"... due to "Validator<any, TVal>" vs "Validator<any>" in 'geterrMsg')
+    throw new Error(getErrMsg(...refiners));
 }
 
 /**

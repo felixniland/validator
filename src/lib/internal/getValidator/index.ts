@@ -1,7 +1,7 @@
 import type { ValIden, ValidatorFn } from "felixtypes";
 import * as IsIndividual from "../../is/index.js";
 import { isValIden } from "../../labels/index.js";
-import { _INTERNAL_GET_IS_IDEN } from "$lib/is/getIsValidator.js";
+import { _INTERNAL_GET_IS_IDEN } from "../../is/getIsValidator.js";
 
 export {
     INTERNAL_getValidator
