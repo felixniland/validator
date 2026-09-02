@@ -62,11 +62,13 @@ export {
 // ): (v: unknown) => v is GetValidatorReturn<VType[number]> {
 function ensure<
     const TVal,
-    const VType extends ReadonlyNonEmptyArr<RelatedValidators<TVal> | ValidatorFn<any, TVal>>
+    const RType extends TVal,
+    const VType extends ReadonlyNonEmptyArr<RelatedValidators<TVal> | ValidatorFn<RType, TVal>>
 >(
     val: TVal,
     ...refiners: VType
-): GetValidatorReturn<VType[number]> {
+// ): GetValidatorReturn<VType[number]> {
+): GetRelatedValidatorReturn<TVal, RType, VType> {
     assertNonEmpty(refiners);
     for (let i = 0; i < refiners.length; i++) {
         if ((INTERNAL_getValidator(refiners[i]!))(val)) return val as any;
