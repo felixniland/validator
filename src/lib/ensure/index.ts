@@ -59,7 +59,7 @@ export {
  */
 // function getRefiner<const T, (
 //     ...refiners: VType
-// ): (v: unknown) => v is GetValidatorReturn<VType[number]> {
+// ): (v: unknown) => v is GetValidatorReturn<VxType[number]> {
 function ensure<
     const TVal,
     const RType extends TVal,
