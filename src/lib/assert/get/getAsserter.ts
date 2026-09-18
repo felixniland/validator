@@ -76,4 +76,5 @@ type AsserterFromTypeUnion<TAsserted> = ((v: unknown) => asserts v is TAsserted)
  * type ExampleWithUnion = Asserter<string | number>; // (v: unknown) => asserts v is string | number
  * ```
 */
+// @ts-expect-error(6133 - no unused locals)
 type Asserter<TAsserted> = TAsserted extends ReadonlyArray<ValIden | ValidatorFn<any, any>> ? ParsedAsserter<TAsserted> : AsserterFromTypeUnion<TAsserted>;

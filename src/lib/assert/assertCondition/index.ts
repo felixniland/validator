@@ -64,6 +64,7 @@ function ASSERT<T>(
         if (isFn(item)) return item(v);
         if (isValIden(item)) return getRefiner(item)(v);
         if (isBool(item)) return item;
+        return undefined;
     })
     .filter(isBool); // remove non-valIden string && undefined
 

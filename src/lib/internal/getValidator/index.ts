@@ -16,6 +16,7 @@ export {
 */
 function INTERNAL_getValidator(validator: ValIden | ValidatorFn<any, any>): ValidatorFn<any, any> {
     if (isValIden(validator)) return IsIndividual[_INTERNAL_GET_IS_IDEN[validator]];
+    
     if (IsIndividual.isFn(validator)) {
         // testing... TODO: need to put under devFlag
             // if (!(validator.length)) throw new Error("expected validator to have args.length of 1");
@@ -26,5 +27,6 @@ function INTERNAL_getValidator(validator: ValIden | ValidatorFn<any, any>): Vali
         return validator as ValidatorFn<any>;
     }
     
+    console.error("bad input", validator);
     throw new Error("expected ValIden or function");
 }

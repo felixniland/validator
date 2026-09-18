@@ -1,4 +1,5 @@
-import { isArr, isSet } from "../is/index.js";
+import { isArr } from "../is/isArr.js";
+import { isSet } from "../is/isSet.js";
 import type { NonEmptyArr, NonSymbolPrim } from "felixtypes";
 
 export {

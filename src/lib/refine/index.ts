@@ -95,6 +95,7 @@ type RelatedNumber = Exclude<RelatedValidators<number>, "nonNullable">;
 /** unchanged */
 type RelatedObj = Exclude<RelatedValidators<object>, "v4UUID">;
 
+// @ts-expect-error(6133 - no unused locals)
 const ALL_RELATED_REFINERS = {
     "string": allOf<RelatedStr>()(["dateStr", "digitStr", "str", "v4UUID", "stringable"]),
     "bigint": allOf<RelatedBigInt>()(["bigint", "stringable"]),
