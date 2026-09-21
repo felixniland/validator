@@ -7,10 +7,17 @@ import { isObj } from "../is/isObj.js";
 
 /**
  * TODO:
-    * []: now that I've added the 'errMsg' prop, there is some odd crossover with "assertCondition"; this is also, frankly, cleaner, and should be used preferably
-    * []: 'ensure' should be a different export based on 'mode', rather than directing as it does...
-    * []: this doesn't use 'devWarn', since 'utils' depends on 'validator'... I think that's fine...
+    * []: now that I've added the 'errMsg' prop, there is some odd crossover with "assertCondition"
+        * THIS is much cleaner than 'assertCondition', but 'assertCondition' also takes any old '(val: T) => boolean'
     * []: tests
+    * []: a wrapper around {@link ensure} that returns the val - i.e., essentially typecasts it - if not in 'dev' mode
+        // function devEnsure<const TVal, etc...>(
+        //     val: TVal, etc...
+        // ): GetRelatedValidatorReturn<TVal, TVal, [TIden]> {
+        //     // @ts-expect-error(2322: ReturnType is not assignable to...)
+        //     if (!dev) return val;
+        //     return ensure(val, iden, getDefault, devWarnOnDefault);
+        // }
  */
 
 /** 
@@ -25,39 +32,56 @@ export {
 };
 
 /**
- * Ensures that a value satisfies a given validator identifier.
- * Returns the value if it passes validation, otherwise returns the result of 'getDefaultVal()' if it was provided, otherwise throws an Error.
- * @template TIden - The validator identifier type; there are no generics on any ValidatorFns passed to this fn, as TS can be annoying with those :) as with any assert, ensuring is up to you!
+ * Ensures that a value satisfies a given validator identifier, OR provides getDefaultVal?.(), or throws an Error.
  * @param val - The value to validate
  * @param refiners - spread Array of (related!) ValIdens and/or ValidatorFns
- * @param opts.getDefaultVal - (OPTIONAL) getter for the default value to return; must be the same as what the refiners check for, not a new value type
+ * @param opts.getDefaultVal - (OPTIONAL) getter for the default value to return, which can optoinally take "val" as an argument; must be the same as what the refiners check for, not a new value type
  * @param opts.customErrMsg - (OPTIONAL) getter for a custom err msg, which can optionally take "val" as an argument
  * @returns The validated value, narrowed to the type specified by the identifier
- * @throws if the value does not satisfy the validator
  * @throws if 'refiners' is empty
+ * @throws if 'refiners' has a non-ValIden, non-Function entry
  * @throws if the last member of refiners is an empty object - i.e., you provide an empty 'param.opts'
- * you will get undefined behaviour if you pass a sparse array, u disorganised monster
+ * @usage you will get undefined behaviour if you pass a sparse array, u disorganised monster
 */
+// NTS: Overload 1: no opts — preserves direct VType inference
 function ensure<
     const TVal,
     const RType extends TVal,
     const VType extends ReadonlyNonEmptyArr<RelatedValidators<TVal> | ValidatorFn<RType, TVal>>
 >(
-    val: TVal, ...args: [
-        ...refiners: VType,
-        opts?: {
-            getDefaultVal?: () => GetRelatedValidatorReturn<TVal, RType, VType>;
-            customErrMsg?: (val: TVal) => string;
-        }
-    ]
-): GetRelatedValidatorReturn<TVal, RType, VType> {
-    const refiners = args as Array<RelatedValidators<TVal> | ValidatorFn<RType, TVal>>;
-    
-    let getDefaultVal: NullOr<() => GetRelatedValidatorReturn<TVal, RType, VType>> = null;
+    val: TVal,
+    ...refiners: VType
+): GetRelatedValidatorReturn<TVal, RType, VType>;
+
+// NTS: Overload 2: with opts — opts is required, which lets TS see the difference between "VType" and "opts"; when opts was in the all-in-one signature before ('opts?:'), it would aggressively widen 'VType'
+function ensure<
+    const TVal,
+    const RType extends TVal,
+    const VType extends ReadonlyNonEmptyArr<RelatedValidators<TVal> | ValidatorFn<RType, TVal>>
+>(
+    val: TVal,
+    ...args: [...refiners: VType, opts: {
+        getDefaultVal?: (val: TVal) => NoInfer<GetRelatedValidatorReturn<TVal, RType, VType>>;
+        customErrMsg?: (val: TVal) => string;
+    }]
+): GetRelatedValidatorReturn<TVal, RType, VType>;
+
+function ensure<
+    const TVal,
+    const RType extends TVal,
+    const VType extends ReadonlyNonEmptyArr<RelatedValidators<TVal> | ValidatorFn<RType, TVal>>
+>(val: TVal, ...args: Array<any>): GetRelatedValidatorReturn<TVal, RType, VType> {
+    let getDefaultVal: NullOr<(val: TVal) => GetRelatedValidatorReturn<TVal, RType, VType>> = null;
+
     /** the default 'generateErrMsg' is 'getErrMsg(...refiners)'; but we may overwrite it with the user's */
-    let generateErrMsg: Getter<string, TVal | undefined> = (() => getErrMsg(...(refiners as any)));
+    let generateErrMsg: Getter<string, TVal> = (() => getErrMsg(...(refiners as any)));
+    
+    /** this is untrue, as it may have 'opts' as the last member, but we will check that shortly */
+    const refiners = args as Array<RelatedValidators<TVal> | ValidatorFn<RType, TVal>>;
 
     const maybeOpts = refiners.at(-1);
+    
+    /** a flag used to ensure that if 'isObj(maybeOpts)', if it is an empty object, the error is thrown below */
     let isOpts: boolean = false;
 
     /** if 'maybeOpts' is 'opts', pop it off reinfers so it doesn't get passed to 'getValidator' */
@@ -74,52 +98,16 @@ function ensure<
             isOpts = true;
         }
 
-        if (!isOpts) throw new Error("ensure - empty object was passed to refiners Array");
+        if (!isOpts) throw new Error("Validator.ensure expected a non-empty options object; provide 'getDefaultVal' and/or 'customErrMsg', or do not provide an object");
         void refiners.pop();
     }
 
-    assertNonEmpty(refiners);
+    assertNonEmpty(refiners, "Validator.ensure expected a non-empty Array of refiners");
     
     for (let i = 0; i < refiners.length; i++) {
         if ((INTERNAL_getValidator(refiners[i]!))(val)) return val as any;
     }
 
-    if (getDefaultVal) return getDefaultVal();
-
+    if (getDefaultVal) return getDefaultVal(val);
     throw new Error(generateErrMsg(val));
 }
-
-// /**
-//  * a wrapper around 'ensure' to make a reuseable call to it
-//  * if 'getDefault' is provided to this caller, it will be used as default, though can be overriden on a per-call basis
-// */
-// // @ts-expect-error(6133 - no unused locals)
-// function getEnsurer<TIden extends RelatedValidators<TVal>, TVal>(iden: TIden, getDefault?: () => GetRelatedValidatorReturn<TVal, TVal, [TIden]>, devWarnOnDefault?: boolean) {
-//     const errMsg = getErrMsg(iden);
-//     const refiner = getRefiner(iden);
-
-//     return (val: TVal, getDefaultOverride = getDefault): GetRelatedValidatorReturn<TVal, TVal, [TIden]> => {
-//         // @ts-expect-error(2322: ReturnType is not assignable to...)
-//         if (refiner(val)) return val;
-//         if (getDefaultOverride) {
-//             if (devWarnOnDefault && DEV) console.warn("ensure received val", val, `but returning getDefault(), because ${errMsg}`);
-//             return getDefaultOverride();
-//         }
-//         throw new Error(errMsg);
-//     };
-// }
-
-// /** a wrapper around {@link ensure} that returns the val - i.e., essentially typecasts it - if not in 'dev' mode */
-// function devEnsure<
-//     const TVal,
-//     TIden extends RelatedValidators<TVal>
-// >(
-//     val: TVal,
-//     iden: TIden,
-//     getDefault?: () => NoInfer<GetRelatedValidatorReturn<TVal, TVal, [TIden]>>,
-//     devWarnOnDefault?: boolean,
-// ): GetRelatedValidatorReturn<TVal, TVal, [TIden]> {
-//     // @ts-expect-error(2322: ReturnType is not assignable to...)
-//     if (!dev) return val;
-//     return ensure(val, iden, getDefault, devWarnOnDefault);
-// }

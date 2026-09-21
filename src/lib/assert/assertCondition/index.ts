@@ -1,6 +1,5 @@
-import type { ValIden, GetterOr, GetValidatorReturn, ValidatorFn } from "felixtypes";
+import type { GetterOr, GetValidatorReturn, NullOr, ValidatorFn, ValIden } from "felixtypes";
 import { isValIden } from "../../labels/index.js";
-import { isBool, isFn, isStr, isTrue} from "../../is/index.js";
 import { getRefiner } from "../../refine/index.js";
 import { getErrMsg } from "../get/getErrMsg.js";
 
@@ -19,8 +18,8 @@ import { getErrMsg } from "../get/getErrMsg.js";
  */
 
 export {
-    ASSERT,
-}
+    ASSERT
+};
 
 // /** to make sure it doesn't infer "string" from the errMsg; not seeming required tho... */
 // type AlteredGetValidatorReturn<T> = T extends (ValIden | ValidatorFn<any>) ? GetValidatorReturn<T> : never;
@@ -56,28 +55,61 @@ function ASSERT<T>(
     errMsg?: string | ValidatorFn<any, unknown>,
     ...extraRefiners: Array<ValIden | ValidatorFn<any, unknown>>
 ): asserts v is T {
-    const combined: Array<string | GetterOr<boolean> | ValidatorFn<any, any> | undefined> = [errMsgOrRefiner, errMsg, extraRefiners].flat();
-    const valIdenArr: Array<ValIden> = combined.filter(isValIden);
+    /** was a validator of some sort provided? */
+    let sawValidator: boolean = false;
 
-    /** map over any functions, val idens, and bools; for functions, run them; thus ending up with Array<bool> */
-    const validated: Array<boolean> = combined.map((item) => {
-        if (isFn(item)) return item(v);
-        if (isValIden(item)) return getRefiner(item)(v);
-        if (isBool(item)) return item;
-        return undefined;
-    })
-    .filter(isBool); // remove non-valIden string && undefined
+    /** has 'v' passed someCondition? */
+    let pass: boolean = false;
 
-    if (!validated.length) throw new Error("No valid refiner provided");
-    const pass = validated.some(isTrue);
+    /** a custom errMsg from the user */
+    let customErrMsg: NullOr<string> = null;
+
+    const updateCustomErrMsg = (s: string): void => {
+        if (customErrMsg) throw new Error("customErrMsg has already been set! You can only provide one custom err msg. You silly poo!");
+        customErrMsg = s;
+    }
+
+    const combined = [
+        errMsgOrRefiner,
+        errMsg,
+        extraRefiners
+    ]
+        .flat() satisfies Array<string | GetterOr<boolean> | ValidatorFn<any, any> | undefined>;
+
+    loopDeLoop: for (let i = 0; i < combined.length; i++) {
+        const entry = combined[i];
+        
+        switch(true) {
+            case (typeof entry === "string"):
+                /** isValIden ? push the resolved refiner to the end of the array : set it as the customErrMsg */
+                if (isValIden(entry)) combined.push(getRefiner(entry));
+                else updateCustomErrMsg(entry);
+                continue loopDeLoop;
+            
+            case (typeof entry === "boolean"):
+                sawValidator = true;
+                if (!entry) continue loopDeLoop;
+                pass = true;
+                break loopDeLoop;
+
+            case (typeof entry === "function"):
+                sawValidator = true;
+                if (!entry(v)) continue loopDeLoop;
+                pass = true;
+                break loopDeLoop;
+
+            case (typeof entry === "undefined"):
+                continue loopDeLoop;
+
+            default:
+                entry satisfies never;
+                throw new Error("ASSERT - unhandled entry in Array<refiners>");
+        }
+    }
+
     if (pass) return;
 
-    /** ok, now we need to throw... */
-    const errMsgFromCaller = combined.filter((item) => isStr(item) && !isValIden(item))[0] as string | undefined;
-
-    const finalErrMsg =
-        errMsgFromCaller
-        || getErrMsg(...valIdenArr)
+    if (!sawValidator) throw new Error("ASSERT received no validators");
     
-    throw new Error(finalErrMsg);
+    throw new Error(customErrMsg || getErrMsg(...combined.filter(isValIden)));
 }
