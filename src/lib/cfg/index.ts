@@ -1,10 +1,8 @@
 export {
-    getConfig,
-    setConfig,
-    DEFAULT_CONFIG,
+    ValidatorConfig
 }
 
-type Cfg = {
+class ValidatorConfig {
     /**
      * should 'vacuous logic' be allowed; i.e., statements that can't be logically tested because the given data is 'empty'
      * @todo I should copy in a better, formal definition XD
@@ -22,33 +20,22 @@ type Cfg = {
      * isAlpha(1); // always false
      * ```
     */
-    allowVacuous: boolean
-};
+    static allowVacuous: boolean = true;
 
-/** the default config */
-const DEFAULT_CONFIG = {
-    allowVacuous: true,
-} as const satisfies Cfg;
+    /**
+     * internal utlity to return if an array is vacuous, only if it's relevant to the lib's functions; i.e., returns false if vacuous arrays are allowed, since we don't care in that instance
+     * @returns FALSE if getConfig().allowVacuous is true
+     * @returns otherwise, returns Boolean representing 'v.length === 0'
+    */
+    static isVacuousArray(v: unknown): boolean {
+        if (!Array.isArray(v)) return false;
+        
+        return this.allowVacuous
+            ? false
+            : v.length === 0;
+    }
 
-let cfg: Cfg = structuredClone(DEFAULT_CONFIG);
-
-/**
- * updates the global config for the validator
- * @returns a readonly copy of the current config
-*/
-function setConfig(overwrite: Partial<Cfg>): Cfg {
-    cfg = {
-        ...cfg,
-        ...overwrite
-    };
-
-    return getConfig();
-}
-
-/**
- * @returns a readonly copy of the current config
- * use {@link setConfig} to update the config
-*/
-function getConfig(): Readonly<Cfg> {
-    return structuredClone(cfg);
+    private constructor() {
+        throw new Error("do not instantiate ValidatorConfig! It is a singleton class with only static methods, you tonk-a-lonk");
+    }
 }

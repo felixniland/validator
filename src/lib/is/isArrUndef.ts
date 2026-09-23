@@ -1,5 +1,5 @@
+import { ValidatorConfig } from "../index.js";
 import { isUndef } from "./isUndef.js";
-import { isVacuousArray } from "../internal/isVacuousArr/index.js";
 
 /** Checks if val is an Array of undefined */
-export const isArrUndef = (val: unknown): val is Array<undefined> => Array.isArray(val) && !isVacuousArray(val) && val.every(isUndef);
+export const isArrUndef = (val: unknown): val is Array<undefined> => Array.isArray(val) && !ValidatorConfig.isVacuousArray(val) && val.every(isUndef);

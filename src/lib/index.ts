@@ -15,6 +15,7 @@ export * from "./instanceOf/index.js";
 export * from "./is/index.js";
 export * from "./kb/index.js";
 export * from "./labels/index.js";
+export * from "./obj/index.js";
 export * from "./prim/index.js";
 export * from "./refine/index.js";
 export * from "./tuples/index.js";

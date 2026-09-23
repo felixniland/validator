@@ -1,4 +1,4 @@
-import { isVacuousArray } from "../../internal/index.js";
+import { ValidatorConfig } from "../../cfg/index.js";
 import type { Alpha } from "felixtypes";
 
 // this old version of "isAlpha" only works with English // const isAlpha = (str: string): str is Alpha => str.length === 1 && /^[a-zA-Z]$/.test(str);
@@ -12,5 +12,5 @@ import type { Alpha } from "felixtypes";
  */
 export const isAlpha = (str: string): str is Alpha => {
     const arr = [...str];
-    return !isVacuousArray(arr) && arr.every((s) => s.toUpperCase() !== s.toLowerCase());
+    return !ValidatorConfig.isVacuousArray(arr) && arr.every((s) => s.toUpperCase() !== s.toLowerCase());
 };

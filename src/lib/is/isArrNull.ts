@@ -1,5 +1,5 @@
+import { ValidatorConfig } from "../index.js";
 import { isNull } from "./isNull.js";
-import { isVacuousArray } from "../internal/isVacuousArr/index.js";
 
 /** Checks if val is an Array of nulls */
-export const isArrNull = (val: unknown): val is Array<null> => Array.isArray(val) && !isVacuousArray(val) && val.every(isNull);
+export const isArrNull = (val: unknown): val is Array<null> => Array.isArray(val) && !ValidatorConfig.isVacuousArray(val) && val.every(isNull);

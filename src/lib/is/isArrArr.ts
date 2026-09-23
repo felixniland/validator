@@ -1,5 +1,5 @@
+import { ValidatorConfig } from "../cfg/index.js";
 import { isArr } from "./isArr.js";
-import { isVacuousArray } from "../internal/isVacuousArr/index.js";
 
 /** Checks if val is an Array of Arrays */
-export const isArrArr = (val: unknown): val is Array<Array<unknown>> => Array.isArray(val) && !isVacuousArray(val) && val.every(isArr);
+export const isArrArr = (val: unknown): val is Array<Array<unknown>> => Array.isArray(val) && !ValidatorConfig.isVacuousArray(val) && val.every(isArr);

@@ -93,10 +93,11 @@ function assertNthMemberOfTupleIs<
     throw new Error(`expected tuple[${idx}] to be ${"TODO" as TODO}`);
 }
 
-// Crab's testing shack
-    // const bla: SomeTuple = [1, 2];
-    // if (nthMemberOfTupleIs(bla, 1, "boolNum")) {
-    //     bla;
-    // } else {
-    //     bla;
-    // }
+// // Crab's testing shack
+// type SomeTuple = [number, number];
+// const bla: SomeTuple = [1, 2];
+// if (nthMemberOfTupleIs(bla, 1, "boolNum")) {
+//     bla;
+// } else {
+//     bla;
+// }

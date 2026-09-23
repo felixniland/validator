@@ -1,5 +1,5 @@
+import { ValidatorConfig } from "../index.js";
 import { isNum } from "./isNum.js";
-import { isVacuousArray } from "../internal/isVacuousArr/index.js";
 
 /** Checks if val is an Array of numbers */
-export const isArrNum = (val: unknown): val is Array<number> => Array.isArray(val) && !isVacuousArray(val) && val.every(isNum);
+export const isArrNum = (val: unknown): val is Array<number> => Array.isArray(val) && !ValidatorConfig.isVacuousArray(val) && val.every(isNum);

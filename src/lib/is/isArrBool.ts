@@ -1,5 +1,5 @@
+import { ValidatorConfig } from "../index.js";
 import { isBool } from "./isBool.js";
-import { isVacuousArray } from "../internal/isVacuousArr/index.js";
 
 /** Checks if val is an Array of booleans */
-export const isArrBool = (val: unknown): val is Array<boolean> => Array.isArray(val) && !isVacuousArray(val) && val.every(isBool);
+export const isArrBool = (val: unknown): val is Array<boolean> => Array.isArray(val) && !ValidatorConfig.isVacuousArray(val) && val.every(isBool);
