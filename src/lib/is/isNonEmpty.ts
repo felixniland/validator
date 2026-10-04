@@ -21,5 +21,5 @@ function isNonEmpty<T>(arr: T): arr is (T extends Array<infer U> ? MutNonEmptyAr
 function isNonEmpty<T>(arr: ReadonlyArray<T>): arr is ReadonlyNonEmptyArr<T>;
 function isNonEmpty<T>(arr: Array<T>): arr is MutNonEmptyArr<T>;
 function isNonEmpty<T>(arr: ReadonlyArray<T> | Array<T>): arr is ReadonlyNonEmptyArr<T> | MutNonEmptyArr<T> {
-    return arr.some((e) => !isUndef(e));
+    return Array.isArray(arr) && arr.some((e) => !isUndef(e));
 }
