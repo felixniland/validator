@@ -1,4 +1,4 @@
-import type { AllowsDirectComparison } from "felixtypes";
+import type { AllowsDirectComparison } from "../types.js";
 
 export {
     allowsDirectComparison,

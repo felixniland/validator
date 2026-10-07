@@ -1,4 +1,4 @@
-import { getStdAsserter } from "./_assertUtils.js";
+import { _getStdAsserter } from "./_assertUtils.js";
 
 /** Asserts v is a DOM Node */
-export const assertNode = getStdAsserter("node");
+export const assertNode = _getStdAsserter("node");

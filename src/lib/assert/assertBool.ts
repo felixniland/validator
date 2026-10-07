@@ -1,3 +1,3 @@
 /** Asserts v is a boolean */
-import { getStdAsserter } from "./_assertUtils.js";
-export const assertBool = getStdAsserter("bool");
+import { _getStdAsserter } from "./_assertUtils.js";
+export const assertBool = _getStdAsserter("bool");

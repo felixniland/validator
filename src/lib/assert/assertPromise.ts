@@ -1,3 +1,3 @@
 /** Asserts v is a Promise */
-import { getStdAsserter } from "./_assertUtils.js";
-export const assertPromise = getStdAsserter("promise");
+import { _getStdAsserter } from "./_assertUtils.js";
+export const assertPromise = _getStdAsserter("promise");

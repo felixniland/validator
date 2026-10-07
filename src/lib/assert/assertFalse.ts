@@ -1,3 +1,3 @@
 /** Asserts v is strictly `false` */
-import { getStdAsserter } from "./_assertUtils.js";
-export const assertFalse = getStdAsserter("false");
+import { _getStdAsserter } from "./_assertUtils.js";
+export const assertFalse = _getStdAsserter("false");

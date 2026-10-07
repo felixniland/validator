@@ -1,4 +1,4 @@
-import { getStdAsserter } from "./_assertUtils.js";
+import { _getStdAsserter } from "./_assertUtils.js";
 
 /** Asserts that a v is an HTMLSpanElement */
-export const assertSpan = getStdAsserter("span");
+export const assertSpan = _getStdAsserter("span");

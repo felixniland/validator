@@ -1,3 +1,3 @@
 /** Asserts v is an async function */
-import { getStdAsserter } from "./_assertUtils.js";
-export const assertAsyncFn = getStdAsserter("asyncFn");
+import { _getStdAsserter } from "./_assertUtils.js";
+export const assertAsyncFn = _getStdAsserter("asyncFn");

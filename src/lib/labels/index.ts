@@ -1,13 +1,16 @@
-import type { ValIden } from "felixtypes";
+import { newPrimValidator } from "../prim/index.js";
+import type { NonEmptyArr } from "felixtypes";
+import type { CorePrettyValIden, CoreValIden } from "../types.js";
 
 export {
-    VAL_IDEN_TO_PRETTY_MAP,
-    isValIden,
+    CORE_VAL_IDEN_TO_PRETTY_MAP,
+    isCoreValIden,
+    isCorePrettyValIden
 }
 
-const isValIden = (v: unknown): v is ValIden => typeof v === "string" && v in VAL_IDEN_TO_PRETTY_MAP;
+const isCoreValIden = (v: unknown): v is CoreValIden => typeof v === "string" && v in CORE_VAL_IDEN_TO_PRETTY_MAP;
 
-const VAL_IDEN_TO_PRETTY_MAP = {
+const CORE_VAL_IDEN_TO_PRETTY_MAP = {
 	str: 'string',
 	num: 'number',
 	compNum: 'comparable number',
@@ -64,4 +67,6 @@ const VAL_IDEN_TO_PRETTY_MAP = {
     nonEmpty: "Non-Empty Array",
     nonNullable: "Non-nullable",
     stringable: "Stringable",
-} as const satisfies Record<ValIden, string>;
+} as const satisfies Record<CoreValIden, string>;
+
+const isCorePrettyValIden = newPrimValidator((Object.values(CORE_VAL_IDEN_TO_PRETTY_MAP) as NonEmptyArr<CorePrettyValIden>));

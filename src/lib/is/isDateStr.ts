@@ -1,4 +1,4 @@
-import type { DateStr } from "felixtypes";
+import type { DateStr } from "../types.js";
 import { isStr } from "./isStr.js";
 
 /** Checks if val is a valid date string */

@@ -1,6 +1,6 @@
 import * as KEY_TYPE from "../../is/index.js";
 import { isStr } from "../../../is/isStr.js";
-import type { ValidatorFn } from "felixtypes";
+import type { ValidatorFn } from "../../../types.js";
 
 /**
  * TODO:

@@ -1,4 +1,4 @@
-import { getStdAsserter } from "./_assertUtils.js";
+import { _getStdAsserter } from "./_assertUtils.js";
 
 /** Asserts v is {@link VoidElement} */
-export const assertVoidEl = getStdAsserter("voidEl");
+export const assertVoidEl = _getStdAsserter("voidEl");

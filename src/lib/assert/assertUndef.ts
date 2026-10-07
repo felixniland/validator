@@ -1,4 +1,4 @@
-import { getStdAsserter } from "./_assertUtils.js";
+import { _getStdAsserter } from "./_assertUtils.js";
 
 /** Asserts v is `undefined` */
-export const assertUndef = getStdAsserter("undef");
+export const assertUndef = _getStdAsserter("undef");

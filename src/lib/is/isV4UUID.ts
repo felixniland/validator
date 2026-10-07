@@ -1,3 +1,6 @@
+import type { V4UUID } from "../types.js";
+import { isStr } from "./isStr.js";
+
 // Yes, each portion in a UUID has a fixed length. crypto.randomUUID() generates UUID v4 strings in this format:
 // 
 // The segment lengths are:
@@ -11,8 +14,6 @@
 // /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 // Would you like me to check your codebase to see where you'd like to add this validator, or do you have other questions about UUID validation?
 
-import type { V4UUID } from "felixtypes";
-import { isStr } from "./isStr.js";
 
 const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 

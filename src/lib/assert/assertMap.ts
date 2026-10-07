@@ -1,4 +1,4 @@
-import { getStdAsserter } from "./_assertUtils.js";
+import { _getStdAsserter } from "./_assertUtils.js";
 
 /** Asserts v is a Map */
-export const assertMap = getStdAsserter("map");
+export const assertMap = _getStdAsserter("map");

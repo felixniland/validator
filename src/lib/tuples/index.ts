@@ -1,5 +1,6 @@
+import type { GetValidatorReturn, RelatedValidators } from "../types.js";
 import { getRefiner } from "../refine/index.js";
-import type { GetValidatorReturn, RelatedValidators, TODO } from "felixtypes";
+import type { TODO } from "felixtypes";
 
 /**
  * TODO:

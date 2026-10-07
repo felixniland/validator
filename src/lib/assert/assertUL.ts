@@ -1,3 +1,3 @@
 /** Asserts v is an HTMLUListElement */
-import { getStdAsserter } from "./_assertUtils.js";
-export const assertUL = getStdAsserter("ul");
+import { _getStdAsserter } from "./_assertUtils.js";
+export const assertUL = _getStdAsserter("ul");

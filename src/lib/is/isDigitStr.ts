@@ -1,5 +1,4 @@
-import type { DigitStr } from "felixtypes";
-
+import type { DigitStr } from "../types.js";
 import { isStr } from "./isStr.js";
 
 /** Checks if val is a digit string (0-9 only) */

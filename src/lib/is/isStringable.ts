@@ -1,4 +1,4 @@
-import type { Stringable } from "felixtypes";
+import type { Stringable } from "../index.js";
 import { isNull } from "./isNull.js";
 
 export {

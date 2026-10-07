@@ -1,6 +1,7 @@
-import { getRefiner } from "../refine/index.js";
-import type { GetValidatorReturn, ReadonlyNonEmptyArr, ValidatorFn, ValIden } from "felixtypes";
+import type { ReadonlyNonEmptyArr } from "felixtypes";
 import { ValidatorConfig } from "../cfg/index.js";
+import { getRefiner } from "../refine/index.js";
+import type { GetValidatorReturn, ValidatorFn, ValIden } from "../types.js";
 
 /**
  * TODO:

@@ -1,3 +1,3 @@
 /** Asserts v is an HTMLElement */
-import { getStdAsserter } from "./_assertUtils.js";
-export const assertHtmlEl = getStdAsserter("htmlEl");
+import { _getStdAsserter } from "./_assertUtils.js";
+export const assertHtmlEl = _getStdAsserter("htmlEl");
