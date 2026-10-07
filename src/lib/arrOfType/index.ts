@@ -9,6 +9,8 @@ import { ValidatorConfig } from "../cfg/index.js";
     * []: 'allowVacuous' prop to override the default
 */
 
+
+// @ts-expect-error("WIP, not exported")
 function isArrOfType<
     const VType extends ReadonlyNonEmptyArr<ValIden | ValidatorFn<any>>
 >(

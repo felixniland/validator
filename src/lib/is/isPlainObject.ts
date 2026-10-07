@@ -6,6 +6,7 @@ import type { PlainObject } from "felixtypes";
 */
 
 /** Checks if v is a PlainObject */
+// @ts-expect-error("WIP, not exported")
 const isPlainObject = (v: unknown): v is PlainObject => {
     if (
         v === null

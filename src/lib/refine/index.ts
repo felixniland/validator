@@ -1,9 +1,51 @@
-import type { GetValidatorReturn, NoDuplicatesAllowed, RelatedValidators, ValidatorFn, ValIden, NonSymbolPrim, ReadonlyNonEmptyArr } from "felixtypes";
-import { INTERNAL_getValidator } from "../internal/getValidator/index.js";
+import { INTERNAL_getValidator } from "../internal/index.js";
+import { _INTERNAL_GET_IS_IDEN } from "../is/getIsValidator.js";
+import { isValIden } from "../labels/index.js";
+import { newPrimValidator } from "../prim/index.js";
+import { DEV } from "esm-env";
+import type { Compute, GetValidatorReturn, NoDuplicatesAllowed, NonEmptyArr, NonSymbolPrim, NullOr, ReadonlyNonEmptyArr, RelatedValidators, ReverseMap, ValidatorFn, ValIden } from "felixtypes";
 import { assertNonEmpty } from "../assert/assertNonEmpty.js";
+import * as IS from "../is/index.js";
 
 export {
-    getRefiner,
+    getRefiner
+};
+
+type FnIden = keyof typeof FN_IDEN_TO_VAL_IDEN;
+
+/** Map concatenated strings of multiple ValIden => a single function */
+const IDEN_GROUP_CACHE = new Map<string, (v: unknown) => v is unknown>();
+
+/** get 'allValidators' by removing 'mapHasKey', and then convert them to a Set */
+const { mapHasKey, ...rest } = IS;
+
+const FN_IDEN_TO_VAL_IDEN = reverseLookup(_INTERNAL_GET_IS_IDEN);
+const isFnIden = newPrimValidator(Object.keys(FN_IDEN_TO_VAL_IDEN) as NonEmptyArr<FnIden>);
+function assertFnIden(v: unknown): asserts v is FnIden {
+    if (isFnIden(v)) return;
+    throw new Error(`expected FnIden, received: ${v}`);
+}
+
+const VALIDATOR_TO_VAL_IDEN_MAP = new Map<ValidatorFn<any, any>, ValIden>();
+
+for (const [iden, validator] of Object.entries(rest)) {
+    assertFnIden(iden);
+    const valIden = FN_IDEN_TO_VAL_IDEN[iden];
+    VALIDATOR_TO_VAL_IDEN_MAP.set(validator, valIden);
+}
+
+/**
+ * @returns ValIden | undefined, if the given fn maps DIRECTLY to a ValIden
+ * 
+ * i.e., it must be this lib's "isStr"; an equivalent fn will return 'undefined'
+ * @emits console.warn IN DEV if true, providing the ValIden
+ * @usage to enable caching of requests with multiple validators, it is preferable to use the ValIden;
+ * (functions are not cached, to avoid interfering with their garbage collection)
+*/
+function validatorIsFromThisLib(fn: ValidatorFn<any, any>): ValIden | undefined {
+    const maybeIden = VALIDATOR_TO_VAL_IDEN_MAP.get(fn) satisfies ValIden | undefined;
+    if (maybeIden && DEV) console.warn(`the function for ValIden "${maybeIden}" was passed directly: prefer passing the ValIden to enable caching`);
+    return maybeIden;
 }
 
 /**
@@ -21,20 +63,97 @@ export {
  * @example 'getRefiner("str")' returns '(v: unknown) => v is string'
  * @example 'getRefiner((o): o is Date => o instance of Date))' returns '(o: unknown) => o is Date'
  * @example 'getRefiner("str", (o): o is Date => o instance of Date))' returns '(o: unknown) => o is string | Date'
+ * @usage internally, caches the 'combined' ValidatorFn generated from requests that contain 2+ ValIdens
+ * @emits console.warn in div when (a) a ValIden is passed multiple times, or (b) a fn from this lib is passed, rather than its ValIden
+ * @usage due to caching, the refiners are NOT guaranteed to be checked in the same order you provided them; so do not expect it to operate like a switch; only group validators when your code works with 'the returned value is any of these refined types'
 */
 function getRefiner<const T, const VType extends ReadonlyNonEmptyArr<ValIden | ValidatorFn<any, T>>>(
     ...refiners: VType
 ): (v: unknown) => v is GetValidatorReturn<VType[number]> {
     assertNonEmpty(refiners);
-    const validatorArr = refiners.map(INTERNAL_getValidator);
 
-    /** return early if they've only requested a single refiner */
-    if (validatorArr.length === 1) return (validatorArr.pop()!) as ((v: unknown) => v is GetValidatorReturn<VType[number]>);
+    /** keep a Set of ValIdens as we loop thru 'refiners', so that: (a) we can cache and combine them all if there are > 1, and (b) we can emit console.warn if there are duplicates */
+    const valIdens = new Set<ValIden>();
+
+    /** gather fns (as opposed to ValIdens) as we go, and then add the ValIdens */
+    const validatorArr: Array<ValidatorFn<any, any>> = [];
+
+    for (const r of refiners) {
+        if (isValIden(r)) {
+            if (valIdens.has(r)) {
+                DEV && console.warn(`this ValIden was passed more than once to validator.getRefiner: "${r}"`);
+                continue;
+            }
+
+            valIdens.add(r);
+            continue;
+        }
+
+        /** check if the validator is from this lib, and if so, convert it to its iden so it can be cached and combined; otherwise, add it to 'validatorArr' directly */
+        const maybeIden = validatorIsFromThisLib(r);
+        if (maybeIden) {
+            if (valIdens.has(maybeIden)) {
+                DEV && console.warn(`this ValIden was passed more than once to validator.getRefiner: "${maybeIden}"`);
+                continue;
+            }
+
+            valIdens.add(maybeIden satisfies ValIden);
+        } else {
+            validatorArr.push(r satisfies ValidatorFn<T, any>);
+        }
+    }
+
+    /** if there are any ValIdens, get the fn; plus that helper handles all the caching, etc, etc, etc */
+    const maybeFn = getValidatorFnFromValIdens(valIdens);
+    maybeFn && validatorArr.push(maybeFn);
     
     return function validator(v: unknown): v is GetValidatorReturn<VType[number]> {
         return validatorArr.some((validator) => validator(v));
     }
 }
+
+// NTS: this is separate, rather than using 'getOrInsertComputed', because that method does not exist in all Node versions, so 'build-time' calls will throw
+/**
+ * @param valIdens Set<ValIden>
+ * @returns null if (set.size === 0)
+ * @returns the related validator if (set.size === 1)
+ * @returns the cached function for the combined ValIden, or generates the new one and adds it to the Map
+*/
+function getValidatorFnFromValIdens(valIdens: Set<ValIden>): NullOr<ValidatorFn<unknown, unknown>> {
+    if (valIdens.size === 0) return null;
+    if (valIdens.size === 1) for (const iden of valIdens) return INTERNAL_getValidator(iden);
+
+    const iden = Array.from(valIdens).toSorted().join("-");
+    
+    const extant = IDEN_GROUP_CACHE.get(iden);
+    if (extant) return extant;
+
+    const validatorArr: Array<ValidatorFn<any, any>> = [];
+    
+    for (const v of valIdens) {
+        validatorArr.push(INTERNAL_getValidator(v));
+    }
+    
+    const validatorFn = (v: unknown): v is unknown => validatorArr.some((fn) => fn(v));
+
+    IDEN_GROUP_CACHE.set(iden, validatorFn);
+    
+    return validatorFn;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // /**
 //  * @throws if provided "refiners" is empty
@@ -108,3 +227,16 @@ const ALL_RELATED_REFINERS = {
 } as const satisfies {
     [K in JsTypes]: ReadonlyArray<ValIden>;
 };
+
+// COPIED FROM UTILS, usd only to generate the reverseLookup above for the "fnIden" validation
+function reverseLookup<const T extends Record<PropertyKey, PropertyKey>>(obj: T): Compute<ReverseMap<T>> {
+    const seen = new Set<PropertyKey>();
+
+    return Object.fromEntries(
+        Object.entries(obj).map(([k, v]) => {
+            if (seen.has(v)) throw new Error(`reverseMap does not have unique keys: key ${String(v)} has already been seen`);
+            seen.add(v);
+            return [v, k]
+        })
+    ) as any;
+}

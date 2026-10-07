@@ -1,3 +1,5 @@
 {
-    "typescript.native-preview.tsdk": "node_modules\\@typescript\\native-preview"
+  "search.exclude": {
+    "**/dist": true
+  }
 }
