@@ -7,19 +7,20 @@
     * []: "isAsyncFn" returns "(...args?: any)", but I'd rather it return a spread; however, a spread cannot be optional. Not sure how to properly do this without it mandating that validat'ED asyncFns have args
 */
 
-export * from "./allMatches.js";
+// export * from "./allMatches.js";
 export * from "./allowsDirectComparison/index.js";
 export * from "./assert/index.js";
 export * from "./ensure/index.js";
 export * from "./instanceOf/index.js";
 export * from "./is/index.js";
+export * from "./isSpecificNum/index.js";
 export * from "./kb/index.js";
 export * from "./labels/index.js";
 export * from "./obj/index.js";
-export * from "./isSpecificNum/index.js";
 export * from "./prim/index.js";
 export * from "./refine/index.js";
 export * from "./tuples/index.js";
+export { _V, type VALIDATOR_REGISTRY } from "./mgr/index.js";
 
 export * from "./cfg/index.js";
 export * from "./types.js";
