@@ -1,8 +1,8 @@
-import * as IsIndividual from "../is/index.js";
+import { isNonNullable } from "../is/isNonNullable.js";
 
 /** Asserts v is NonNullable */
 export function assertNonNullable<T>(v: T, errMsg?: string): asserts v is NonNullable<T> {
-    if (!IsIndividual.isNonNullable(v)) throw new Error(errMsg ?? `v is nullable: ${v}`);
+    if (!isNonNullable(v)) throw new Error(errMsg ?? `v is nullable: ${v}`);
 }
 
 // this is a copy of the 'getStdAsserter' internal signature, modified for this fn, but I CBF trying to figure out the overloads so I bailed hehehehehee...

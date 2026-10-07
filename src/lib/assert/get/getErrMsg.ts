@@ -1,5 +1,5 @@
-import { isValIden, VAL_IDEN_TO_PRETTY_MAP } from "../../labels/index.js";
-import type { ValIden, ValidatorFn } from "felixtypes";
+import type { ValidatorFn, CoreValIden } from "../../types.js";
+import { isCoreValIden, CORE_VAL_IDEN_TO_PRETTY_MAP } from "../../labels/index.js";
 
 export {
     setDefaultErrMsg,
@@ -22,11 +22,11 @@ function setDefaultErrMsg(s: string): void {
  * @returns "asserter received incorrect type"
  * @throws if provide an empty array
 */
-function getErrMsg<const VType extends ReadonlyArray<ValIden | ValidatorFn<any>>>(...arr: VType): string {
+function getErrMsg<const VType extends ReadonlyArray<CoreValIden | ValidatorFn<any>>>(...arr: VType): string {
     if (!arr.length) throw new Error("Validator.getErrMsg requires non-empty array");
 
     const expectedTypes = arr
-        .map((entry) => isValIden(entry) ? VAL_IDEN_TO_PRETTY_MAP[entry] : null)
+        .map((entry) => isCoreValIden(entry) ? CORE_VAL_IDEN_TO_PRETTY_MAP[entry] : null)
         .filter(Boolean)
         .join(", or ");
 

@@ -1,6 +1,6 @@
-import type { ValIden, GetValidatorReturn, ValidatorFn } from "felixtypes";
 import { getErrMsg } from "./getErrMsg.js";
 import { getRefiner } from "../../refine/index.js";
+import type { GetValidatorReturn, ValidatorFn, CoreValIden } from "../../types.js";
 
 // this works wonderfully, but requires manually type-ing the output, per TS's asserter conditions...
 
@@ -18,7 +18,7 @@ import { getRefiner } from "../../refine/index.js";
  */
 
 /**
- * @param refiners spread array of (a) {@link ValIden} and/or (b) TypeGuard functions that take "v: unknown"
+ * @param refiners spread array of (a) {@link CoreValIden} and/or (b) TypeGuard functions that take "v: unknown"
  * @returns an asserter of the amalgamated refiners
  * see also {@link getRelatedAsserter}, which takes a type for "V", and only accepts ValIdens/Typeguards that narrow that type
  * @example 'getAsserter("str")' returns '(v: unknown) => asserts v is string'
@@ -33,7 +33,7 @@ import { getRefiner } from "../../refine/index.js";
  * @example getAsserter("arr", "arrBool", "obj") // 'expected Array<unknown>, or Array<boolean>, or object'
  * @param errMsg if no errMsg is provided, and the refiners contains no ValIdens, defaults to {@link DEFAULT_ERR_MSG}
 */
-function getAsserter<const VType extends ReadonlyArray<ValIden | ValidatorFn<any, unknown>>>(...refiners: VType) {
+function getAsserter<const VType extends ReadonlyArray<CoreValIden | ValidatorFn<any, unknown>>>(...refiners: VType) {
     type Asserted = GetValidatorReturn<VType[number]>;
     const defaultErrMsg = getErrMsg(...refiners);
 
@@ -59,7 +59,7 @@ function getAsserter<const VType extends ReadonlyArray<ValIden | ValidatorFn<any
  * type Example = ParsedAsserter<["arrNum", "num", IsStarter]>; // (v: unknown) => asserts v is number | "Bulbasaur" | "Charmander" | "Squirtle" | number[]
  * ```
 */
-type ParsedAsserter<VType extends ReadonlyArray<ValIden | ValidatorFn<any, any>>> = ReturnType<typeof getAsserter<VType>>;
+type ParsedAsserter<VType extends ReadonlyArray<CoreValIden | ValidatorFn<any, any>>> = ReturnType<typeof getAsserter<VType>>;
 /** create an asserter simply from types
  * @example```
  * type Example = AsserterFromTypeUnion<string | number>; // (v: unknown) => asserts v is string | number
@@ -77,4 +77,4 @@ type AsserterFromTypeUnion<TAsserted> = ((v: unknown) => asserts v is TAsserted)
  * ```
 */
 // @ts-expect-error(6133 - no unused locals)
-type Asserter<TAsserted> = TAsserted extends ReadonlyArray<ValIden | ValidatorFn<any, any>> ? ParsedAsserter<TAsserted> : AsserterFromTypeUnion<TAsserted>;
+type Asserter<TAsserted> = TAsserted extends ReadonlyArray<CoreValIden | ValidatorFn<any, any>> ? ParsedAsserter<TAsserted> : AsserterFromTypeUnion<TAsserted>;

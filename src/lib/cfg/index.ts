@@ -1,6 +1,15 @@
+
+/**
+ * TODO:
+    * "WIP" on the 'registerValidator...' stuff
+        * []: I need to actually pull it out of 'felixtypes', and into here...
+            * ... OR, add the declaration omdule into 'felixtypes', and then the user just needs to still add it to this Config, but that feels convulted...
+*/
+
 export {
     ValidatorConfig
-}
+};
+
 
 class ValidatorConfig {
     /**

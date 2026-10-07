@@ -1,4 +1,4 @@
-import { _V } from "$lib/mgr/index.js";
+import { _V } from "../mgr/index.js";
 import type { AutoCompleteStr as DefaultMsg } from "felixtypes";
 import { _INTERNAL_getIsValidator } from "../is/getIsValidator.js";
 import type { CoreValIden, InferValidatedType, ValIden } from "../types.js";

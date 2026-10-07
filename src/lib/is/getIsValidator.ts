@@ -1,9 +1,15 @@
-import * as IsIndividual from "./index.js";
-import type { ValIden } from "felixtypes";
+import type { CoreValIden } from "../types.js";
+import * as IS_FNS from "./index.js";
+
+type IsFns = Exclude<
+    keyof typeof import("../is/index.js"),
+    "createIsIden" | "getIsValidator" | "ALL_IS"
+>;
 
 export {
-    GET_IS_IDEN as _INTERNAL_GET_IS_IDEN,
-}
+    getIsValidator as _INTERNAL_getIsValidator,
+    GET_IS_IDEN as _INTERNAL_GET_IS_IDEN
+};
 
 // // internally, this has been replaced with direct calls to 'isIndividual', but it's used by some things in 'utils'... in ways where, I think, they should use 'getRefiner'...
 //     /**
@@ -11,7 +17,10 @@ export {
 //      * @param val - The ValIden to get the validator for
 //      * @returns The validator function
 //      */
-//     const getIsValidator = <I extends ValIden>(val: I) => IsIndividual[GET_IS_IDEN[val]];
+
+function getIsValidator<I extends CoreValIden>(val: I) {
+    return IS_FNS[GET_IS_IDEN[val]];
+}
 
 const GET_IS_IDEN = {
     arr: "isArr",
@@ -71,6 +80,6 @@ const GET_IS_IDEN = {
     stringable: "isStringable",
     nonEmpty: "isNonEmpty",
 } as const satisfies Record<
-    ValIden,
-    keyof Omit<typeof IsIndividual, "createIsIden" | "getIsValidator" | "ALL_IS">
+    CoreValIden,
+    IsFns
 >;

@@ -1,10 +1,13 @@
-import type { GetterOr, GetValidatorReturn, NullOr, ValidatorFn, ValIden } from "felixtypes";
-import { isValIden } from "../../labels/index.js";
+import type { GetterOr, NullOr } from "felixtypes";
 import { getRefiner } from "../../refine/index.js";
 import { getErrMsg } from "../get/getErrMsg.js";
+import type { GetValidatorReturn, ValidatorFn, CoreValIden } from "../../types.js";
+import { isCoreValIden } from "../../labels/index.js";
 
 /**
  * TODO:
+    * []: this does not properly use "_V", and so really only handles the 'CoreValIden'... soooo... fix that! :-p
+    * 
     * []: it's awkward that you can't just give it a bool... so I'd like to improve that... hmmmm...
         * e.g., from "utils/merge": ASSERT(obj, (o) => !isArr(o), "merge received an array. Incompatible. Can only merge POJOs");
         * I can't just give it "!isArr(obj)" (i.e., false)
@@ -14,7 +17,6 @@ import { getErrMsg } from "../get/getErrMsg.js";
         * ASSERT(someVal)
         * ASSERT(someVal, "custom error msg")
     * []: the runtime handling does not care if the errMsg is the second call to "ASSERT", it would be cool to make the function work that way too
-    * 
  */
 
 export {
@@ -27,9 +29,9 @@ export {
 function ASSERT<T>(v: unknown, ...refiners: Array<ValidatorFn<T, any>>): asserts v is T;
 function ASSERT<T>(v: unknown, errMsg: string, refiners: ValidatorFn<T, any>): asserts v is T;
 function ASSERT<T>(v: unknown, condition: GetterOr<boolean, unknown>, errMsg?: string): asserts v is T;
-function ASSERT<VType extends ReadonlyArray<ValIden | ValidatorFn<any, unknown>>>(v: unknown, ...refiners: VType): asserts v is GetValidatorReturn<VType[number]>;
-function ASSERT<VType extends ReadonlyArray<ValIden | ValidatorFn<any, unknown>>>(v: unknown, errMsg: string, ...refiners: VType): asserts v is GetValidatorReturn<VType[number]>;
-function ASSERT<VType extends ReadonlyArray<ValIden | ValidatorFn<any, unknown>>>(v: unknown, ...errMsgAndOrRefiners: VType): asserts v is GetValidatorReturn<VType[number]>;
+function ASSERT<VType extends ReadonlyArray<CoreValIden | ValidatorFn<any, unknown>>>(v: unknown, ...refiners: VType): asserts v is GetValidatorReturn<VType[number]>;
+function ASSERT<VType extends ReadonlyArray<CoreValIden | ValidatorFn<any, unknown>>>(v: unknown, errMsg: string, ...refiners: VType): asserts v is GetValidatorReturn<VType[number]>;
+function ASSERT<VType extends ReadonlyArray<CoreValIden | ValidatorFn<any, unknown>>>(v: unknown, ...errMsgAndOrRefiners: VType): asserts v is GetValidatorReturn<VType[number]>;
 /**
  * Asserts that a value meets at least one of the provided conditions.
  *
@@ -37,7 +39,7 @@ function ASSERT<VType extends ReadonlyArray<ValIden | ValidatorFn<any, unknown>>
  * @param errMsg - to include a custom error message string, it must be the SECOND argument
  * @param errMsg - if no custom message is provided, and 1+ ValIden are provided, they generate the default errorMessage: `expected {valIdens.join(", or")}}`
  * @param errMsg - if no ValIdens are provided, default is: "asserter received incorrect type"
- * @param conditions boolean | (v?: typeof v) => boolean | {@link ValIden} | Typeguard
+ * @param conditions boolean | (v?: typeof v) => boolean | {@link CoreValIden} | Typeguard
  * @throws error when no condition is met
  * @throws error when no conditions are received
  *
@@ -53,7 +55,7 @@ function ASSERT<T>(
     v: unknown,
     errMsgOrRefiner?: string | GetterOr<boolean, unknown> | ValidatorFn<any, unknown>,
     errMsg?: string | ValidatorFn<any, unknown>,
-    ...extraRefiners: Array<ValIden | ValidatorFn<any, unknown>>
+    ...extraRefiners: Array<CoreValIden | ValidatorFn<any, unknown>>
 ): asserts v is T {
     /** was a validator of some sort provided? */
     let sawValidator: boolean = false;
@@ -82,7 +84,7 @@ function ASSERT<T>(
         switch(true) {
             case (typeof entry === "string"):
                 /** isValIden ? push the resolved refiner to the end of the array : set it as the customErrMsg */
-                if (isValIden(entry)) combined.push(getRefiner(entry));
+                if (isCoreValIden(entry)) combined.push(getRefiner(entry));
                 else updateCustomErrMsg(entry);
                 continue loopDeLoop;
             
@@ -111,5 +113,5 @@ function ASSERT<T>(
 
     if (!sawValidator) throw new Error("ASSERT received no validators");
     
-    throw new Error(customErrMsg || getErrMsg(...combined.filter(isValIden)));
+    throw new Error(customErrMsg || getErrMsg(...combined.filter(isCoreValIden)));
 }

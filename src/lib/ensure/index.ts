@@ -1,9 +1,10 @@
-import { type GetRelatedValidatorReturn, type Getter, type NullOr, type ReadonlyNonEmptyArr, type RelatedValidators, type ValidatorFn } from "felixtypes";
+import type { Getter, NullOr, ReadonlyNonEmptyArr } from "felixtypes";
 import { assertNonEmpty } from "../assert/assertNonEmpty.js";
 import { getErrMsg } from "../assert/get/getErrMsg.js";
-import { INTERNAL_getValidator } from "../internal/index.js";
 import { isFn } from "../is/isFn.js";
 import { isObj } from "../is/isObj.js";
+import type { GetRelatedValidatorReturn, RelatedValidators, ValidatorFn } from "../types.js";
+import { getRefiner } from "../index.js";
 
 /**
  * TODO:
@@ -11,6 +12,7 @@ import { isObj } from "../is/isObj.js";
         * THIS is much cleaner than 'assertCondition', but 'assertCondition' also takes any old '(val: T) => boolean'
     * []: tests
     * []: a wrapper around {@link ensure} that returns the val - i.e., essentially typecasts it - if not in 'dev' mode
+        * it could also make reference to 'ValidatorCfg'; with a flag for, like, "runEnsure" or whatever, which controls if it just returns it
         // function devEnsure<const TVal, etc...>(
         //     val: TVal, etc...
         // ): GetRelatedValidatorReturn<TVal, TVal, [TIden]> {
@@ -105,7 +107,10 @@ function ensure<
     assertNonEmpty(refiners, "Validator.ensure expected a non-empty Array of refiners");
     
     for (let i = 0; i < refiners.length; i++) {
-        if ((INTERNAL_getValidator(refiners[i]!))(val)) return val as any;
+        if ((getRefiner(
+            // @ts-expect-error("the generics don't pass thru...")
+            refiners[i]!)
+        )(val)) return val as any;
     }
 
     if (getDefaultVal) return getDefaultVal(val);

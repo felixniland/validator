@@ -1,11 +1,12 @@
+import { DEV } from "esm-env";
+import type { Compute, NonEmptyArr, NullOr, ReadonlyNonEmptyArr, ReverseMap } from "felixtypes";
 import { INTERNAL_getValidator } from "../internal/index.js";
 import { _INTERNAL_GET_IS_IDEN } from "../is/getIsValidator.js";
-import { isValIden } from "../labels/index.js";
-import { newPrimValidator } from "../prim/index.js";
-import { DEV } from "esm-env";
-import type { Compute, GetValidatorReturn, NoDuplicatesAllowed, NonEmptyArr, NonSymbolPrim, NullOr, ReadonlyNonEmptyArr, RelatedValidators, ReverseMap, ValidatorFn, ValIden } from "felixtypes";
-import { assertNonEmpty } from "../assert/assertNonEmpty.js";
 import * as IS from "../is/index.js";
+import { isCoreValIden } from "../labels/index.js";
+import { INTERNAL_REGISTRY } from "../mgr/index.js";
+import { newPrimValidator } from "../prim/index.js";
+import type { GetValidatorReturn, ValidatorFn, ValIden } from "../types.js";
 
 export {
     getRefiner
@@ -17,8 +18,6 @@ type FnIden = keyof typeof FN_IDEN_TO_VAL_IDEN;
 const IDEN_GROUP_CACHE = new Map<string, (v: unknown) => v is unknown>();
 
 /** get 'allValidators' by removing 'mapHasKey', and then convert them to a Set */
-const { mapHasKey, ...rest } = IS;
-
 const FN_IDEN_TO_VAL_IDEN = reverseLookup(_INTERNAL_GET_IS_IDEN);
 const isFnIden = newPrimValidator(Object.keys(FN_IDEN_TO_VAL_IDEN) as NonEmptyArr<FnIden>);
 function assertFnIden(v: unknown): asserts v is FnIden {
@@ -27,6 +26,8 @@ function assertFnIden(v: unknown): asserts v is FnIden {
 }
 
 const VALIDATOR_TO_VAL_IDEN_MAP = new Map<ValidatorFn<any, any>, ValIden>();
+
+const { mapHasKey, ...rest} = IS;
 
 for (const [iden, validator] of Object.entries(rest)) {
     assertFnIden(iden);
@@ -43,6 +44,7 @@ for (const [iden, validator] of Object.entries(rest)) {
  * (functions are not cached, to avoid interfering with their garbage collection)
 */
 function validatorIsFromThisLib(fn: ValidatorFn<any, any>): ValIden | undefined {
+    // throw new Error("TODO - needs to check the Mgr as well");
     const maybeIden = VALIDATOR_TO_VAL_IDEN_MAP.get(fn) satisfies ValIden | undefined;
     if (maybeIden && DEV) console.warn(`the function for ValIden "${maybeIden}" was passed directly: prefer passing the ValIden to enable caching`);
     return maybeIden;
@@ -55,7 +57,7 @@ function validatorIsFromThisLib(fn: ValidatorFn<any, any>): ValIden | undefined 
 */
 
 /**
- * @param refiners spread array of (a) {@link ValIden} and/or (b) TypeGuard functions that take "v: unknown"
+ * @param refiners spread array of (a) {@link CoreValIden} and/or (b) TypeGuard functions that take "v: unknown"
  * @returns a Typeguard function that amalgamates "refiners"
  * @throws if provided "refiners" is empty
  * @usage note the "Date" example above has the function annotated; TS by design does not infer typeguards, so providing that function without a return type will have it as "(o) => boolean" (and you will get an intellisense error from me)
@@ -70,22 +72,32 @@ function validatorIsFromThisLib(fn: ValidatorFn<any, any>): ValIden | undefined 
 function getRefiner<const T, const VType extends ReadonlyNonEmptyArr<ValIden | ValidatorFn<any, T>>>(
     ...refiners: VType
 ): (v: unknown) => v is GetValidatorReturn<VType[number]> {
-    assertNonEmpty(refiners);
+    if (!refiners.length) throw new Error("getRefiner requires a non-empty Array of arguments");
 
     /** keep a Set of ValIdens as we loop thru 'refiners', so that: (a) we can cache and combine them all if there are > 1, and (b) we can emit console.warn if there are duplicates */
     const valIdens = new Set<ValIden>();
+
+    const addToValIdensAndDevWarnOnDuplicate = (iden: ValIden): void => {
+        if (valIdens.has(iden)) {
+            DEV && console.warn(`this ValIden was passed more than once to validator.getRefiner: "${iden}"`);
+            return;
+        }
+
+        valIdens.add(iden);
+    }
 
     /** gather fns (as opposed to ValIdens) as we go, and then add the ValIdens */
     const validatorArr: Array<ValidatorFn<any, any>> = [];
 
     for (const r of refiners) {
-        if (isValIden(r)) {
-            if (valIdens.has(r)) {
-                DEV && console.warn(`this ValIden was passed more than once to validator.getRefiner: "${r}"`);
-                continue;
-            }
+        /** we do 'isValIden' in its two parts to avoid import order issues */
+        if (isCoreValIden(r)) {
+            addToValIdensAndDevWarnOnDuplicate(r);
+            continue;
+        }
 
-            valIdens.add(r);
+        if (INTERNAL_REGISTRY.isRegisteredValIden(r)) {
+            addToValIdensAndDevWarnOnDuplicate(r);
             continue;
         }
 
@@ -121,7 +133,9 @@ function getRefiner<const T, const VType extends ReadonlyNonEmptyArr<ValIden | V
 */
 function getValidatorFnFromValIdens(valIdens: Set<ValIden>): NullOr<ValidatorFn<unknown, unknown>> {
     if (valIdens.size === 0) return null;
-    if (valIdens.size === 1) for (const iden of valIdens) return INTERNAL_getValidator(iden);
+    if (valIdens.size === 1) {
+        for (const iden of valIdens) return _getValidatorFromValIden(iden);
+    }
 
     const iden = Array.from(valIdens).toSorted().join("-");
     
@@ -131,7 +145,7 @@ function getValidatorFnFromValIdens(valIdens: Set<ValIden>): NullOr<ValidatorFn<
     const validatorArr: Array<ValidatorFn<any, any>> = [];
     
     for (const v of valIdens) {
-        validatorArr.push(INTERNAL_getValidator(v));
+        validatorArr.push(_getValidatorFromValIden(v));
     }
     
     const validatorFn = (v: unknown): v is unknown => validatorArr.some((fn) => fn(v));
@@ -141,7 +155,11 @@ function getValidatorFnFromValIdens(valIdens: Set<ValIden>): NullOr<ValidatorFn<
     return validatorFn;
 }
 
-
+/** trusts that the value given to it is a trusted ValIden, and returns it from the internal source / REGISTRY as appropriate */
+function _getValidatorFromValIden(iden: ValIden): ValidatorFn<any, any> {
+    if (isCoreValIden(iden)) return INTERNAL_getValidator(iden);
+    return INTERNAL_REGISTRY.getValidator(iden);
+}
 
 
 
@@ -179,56 +197,7 @@ function getValidatorFnFromValIdens(valIdens: Set<ValIden>): NullOr<ValidatorFn<
 
 
 
-/**
- * copied from "UTILS" so that I can make this "ALL_RELATED_REFINERS", the purpose of which is to make an "isRelatedRefiner" validator
- * what is missing is that it's obviously quite broad
-    * I want to expand the 'K' of the Record to have, e.g., "arr"
-        * and I call "isArr" before I call "isRelatedRefiner", so I can know which key of the "ALL_RELATED_REFINERS" to call :)
-*/
-type EnsureAllMembers<Union extends NonSymbolPrim, Arr extends ReadonlyArray<Union>> = 
-	[Union] extends [Arr[number]] 
-		? [Arr[number]] extends [Union] 
-			? Arr 
-			: never
-	: `Missing members in array: ${Exclude<Union, Arr[number]>}`
-
-function allOf<Union extends NonSymbolPrim>() {
-	return function<const Arr extends ReadonlyArray<Union>>(
-		arr: Arr & EnsureAllMembers<Union, Arr> & NoDuplicatesAllowed<Arr>
-	): Arr {
-        return arr as Arr;
-	};
-}
-
-type JsTypes = "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined";
-
-/** my bespoke relatedValidators for each type... */
-
-type RelatedStr = Exclude<RelatedValidators<string>, "nonNullable">;
-type RelatedBigInt = Exclude<RelatedValidators<bigint>, "nonNullable">;
-type RelatedBool = Exclude<RelatedValidators<boolean>, "nonNullable">;
-type RelatedFn = Exclude<RelatedValidators<Function>, "nonNullable">;
-type RelatedSymbol = Exclude<RelatedValidators<symbol>, "nonNullable">;
-type RelatedUndef = Exclude<RelatedValidators<undefined>, "nonNullable">;
-type RelatedNumber = Exclude<RelatedValidators<number>, "nonNullable">;
-/** unchanged */
-type RelatedObj = Exclude<RelatedValidators<object>, "v4UUID">;
-
-// @ts-expect-error(6133 - no unused locals)
-const ALL_RELATED_REFINERS = {
-    "string": allOf<RelatedStr>()(["dateStr", "digitStr", "str", "v4UUID", "stringable"]),
-    "bigint": allOf<RelatedBigInt>()(["bigint", "stringable"]),
-    "boolean": allOf<RelatedBool>()(["bool", "true", "false", "stringable"]),
-    "function": allOf<RelatedFn>()(["asyncFn", "fn", "obj"]),
-    "object": allOf<RelatedObj>()(["nonEmpty", "weakSet", "weakMap", "ul", "svelteSet", "svelteMap", "set", "regExp", "promise", "ol", "obj", "node", "map", "listItem", "listEl", "inputEl", "headingEl", "htmlEl", "formEl", "fn", "err", "el", "dateStr", "date", "contentEditable", "blockEl", "asyncFn", "arrUndef", "arrStr", "arrObj", "arrNum", "arrNull", "arrFn", "arrBool", "arrArr", "arr", "textNode", "emptyTextNode", "BR", "span", "voidEl", "nonNullable"]), // "nonEmpty"
-    "symbol": allOf<RelatedSymbol>()(["symbol"]),
-    "undefined": allOf<RelatedUndef>()(["undef", "stringable"]),
-    "number": allOf<RelatedNumber>()(["boolNum", "compNum", "num", "stringable"]),
-} as const satisfies {
-    [K in JsTypes]: ReadonlyArray<ValIden>;
-};
-
-// COPIED FROM UTILS, usd only to generate the reverseLookup above for the "fnIden" validation
+// // COPIED FROM UTILS, usd only to generate the reverseLookup above for the "fnIden" validation
 function reverseLookup<const T extends Record<PropertyKey, PropertyKey>>(obj: T): Compute<ReverseMap<T>> {
     const seen = new Set<PropertyKey>();
 
@@ -240,3 +209,52 @@ function reverseLookup<const T extends Record<PropertyKey, PropertyKey>>(obj: T)
         })
     ) as any;
 }
+
+// /**
+//  * copied from "UTILS" so that I can make this "ALL_RELATED_REFINERS", the purpose of which is to make an "isRelatedRefiner" validator
+//  * what is missing is that it's obviously quite broad
+//     * I want to expand the 'K' of the Record to have, e.g., "arr"
+//         * and I call "isArr" before I call "isRelatedRefiner", so I can know which key of the "ALL_RELATED_REFINERS" to call :)
+// */
+// type EnsureAllMembers<Union extends NonSymbolPrim, Arr extends ReadonlyArray<Union>> = 
+// 	[Union] extends [Arr[number]] 
+// 		? [Arr[number]] extends [Union] 
+// 			? Arr 
+// 			: never
+// 	: `Missing members in array: ${Exclude<Union, Arr[number]>}`
+
+// function allOf<Union extends NonSymbolPrim>() {
+// 	return function<const Arr extends ReadonlyArray<Union>>(
+// 		arr: Arr & EnsureAllMembers<Union, Arr> & NoDuplicatesAllowed<Arr>
+// 	): Arr {
+//         return arr as Arr;
+// 	};
+// }
+
+// type JsTypes = "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined";
+
+// /** my bespoke relatedValidators for each type... */
+
+// type RelatedStr = Exclude<RelatedValidators<string>, "nonNullable">;
+// type RelatedBigInt = Exclude<RelatedValidators<bigint>, "nonNullable">;
+// type RelatedBool = Exclude<RelatedValidators<boolean>, "nonNullable">;
+// type RelatedFn = Exclude<RelatedValidators<Function>, "nonNullable">;
+// type RelatedSymbol = Exclude<RelatedValidators<symbol>, "nonNullable">;
+// type RelatedUndef = Exclude<RelatedValidators<undefined>, "nonNullable">;
+// type RelatedNumber = Exclude<RelatedValidators<number>, "nonNullable">;
+// /** unchanged */
+// type RelatedObj = Exclude<RelatedValidators<object>, "v4UUID">;
+
+// // @ts-expect-error(6133 - no unused locals)
+// const ALL_RELATED_REFINERS = {
+//     "string": allOf<RelatedStr>()(["dateStr", "digitStr", "str", "v4UUID", "stringable", "special"]),
+//     "bigint": allOf<RelatedBigInt>()(["bigint", "stringable"]),
+//     "boolean": allOf<RelatedBool>()(["bool", "true", "false", "stringable"]),
+//     "function": allOf<RelatedFn>()(["asyncFn", "fn", "obj"]),
+//     "object": allOf<RelatedObj>()(["nonEmpty", "weakSet", "weakMap", "ul", "svelteSet", "svelteMap", "set", "regExp", "promise", "ol", "obj", "node", "map", "listItem", "listEl", "inputEl", "headingEl", "htmlEl", "formEl", "fn", "err", "el", "dateStr", "date", "contentEditable", "blockEl", "asyncFn", "arrUndef", "arrStr", "arrObj", "arrNum", "arrNull", "arrFn", "arrBool", "arrArr", "arr", "textNode", "emptyTextNode", "BR", "span", "voidEl", "nonNullable"]), // "nonEmpty"
+//     "symbol": allOf<RelatedSymbol>()(["symbol"]),
+//     "undefined": allOf<RelatedUndef>()(["undef", "stringable"]),
+//     "number": allOf<RelatedNumber>()(["boolNum", "compNum", "num", "stringable"]),
+// } as const satisfies {
+//     [K in JsTypes]: ReadonlyArray<ValIden>;
+// };
