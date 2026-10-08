@@ -16,7 +16,7 @@ type GetExpectedMsg<TIden extends ValIden> = ReturnType<typeof getExpectedMsg<TI
 
 function getExpectedMsg<const TIden extends ValIden>(iden: TIden) {
     // if (isCoreValIden(iden)) return `expected ${CORE_VAL_IDEN_TO_PRETTY_MAP[iden]}` as const;
-    return `expected ${_V.getPrettyIden(iden)} as const`;
+    return `expected ${_V.getPrettyIden(iden)}` as const;
 }
 
 function getStdAsserter<const K extends CoreValIden>(type: K) {
