@@ -2,6 +2,11 @@ import type { NonEmptyArr, NonSymbolPrim, NullOr } from "felixtypes";
 import { isArr } from "../is/isArr.js";
 import { isSet } from "../is/isSet.js";
 
+/**
+ * TODO:
+    * []: PrimValidator class: allow customErrMsg
+*/
+
 export {
     newPrimValidator,
     newStrValidator,
@@ -37,11 +42,12 @@ const newStrValidator = <T extends string>(arr: NonEmptyArr<T>) => newPrimValida
  * similar to 'newPrimValidator', except:
  * - it allows you to add (but not remove!) prims
  * - if 'prims' is empty, the return value is 'false', rather than a throw
- * @todo better err msg, or just join the prims as a default
+ * @usage meant to be used with declaration merging; it does not return new instances with the expanded type
+ * @usage this is footgun-prone, but sometimes this is the pattern you need, so use with caution :)
 */
 class PrimValidator<T extends NonSymbolPrim = never> {
-    constructor(prims?: NonEmptyArr<T>) {
-        this.#prims = (prims as Array<T>) ?? [];
+    constructor(prims?: NonEmptyArr<T> | Set<T>) {
+        this.#prims = Array.from(prims ?? []);
     }
 
     #prims: Array<T>;
@@ -53,11 +59,15 @@ class PrimValidator<T extends NonSymbolPrim = never> {
         return Boolean(this.#validator?.(v));
     }
 
-    /** throws if 'v' is not T; also throws if there is no validator, i.e., you haven't provided anhy prims */
+    /**
+     * @throws error if 'v' is not T
+     * @throws error if you haven't provided any prims
+     * errMsg: `received ${String(v)}, but expected one of: ${this.#prims.join(", or")`
+    */
     ensure(v: unknown): T {
         if (this.validate(v)) return v;
         if (!this.#prims.length) throw new Error("cannot call 'ensure' before providing any prims");
-        throw new Error("expected something else...");
+        throw new Error(`received ${String(v)}, but expected one of: ${this.#prims.join(", or")}`);
     }
 
     addPrim(v: T): void {
@@ -66,16 +76,17 @@ class PrimValidator<T extends NonSymbolPrim = never> {
     }
 }
 
-// const SPECIAL_STRS = ["a", "b"] as const;
-// type SpecialStr = typeof SPECIAL_STRS[number];
-// const test = new PrimValidator<SpecialStr>();
-
-// const someVal = "" as unknown;
-
-// if (test.validate(someVal)) {
-//     someVal; // "a" | "b"
-// } else {
-//     someVal; // "unknown"
+// interface CatNames {
+//     razz: any;
+//     crab: any;
 // }
 
-// const bla = test.ensure(someVal); // "a" | "b"
+// type KittyIden = Compute<keyof CatNames>;
+
+// const test = new PrimValidator<KittyIden>(["razz", "crab"]);
+
+// interface CatNames {
+//     buttons: any;
+// }
+
+// test.addPrim("buttons");

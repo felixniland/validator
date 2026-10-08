@@ -1,10 +1,10 @@
 import type { Getter, NullOr, ReadonlyNonEmptyArr } from "felixtypes";
 import { assertNonEmpty } from "../assert/assertNonEmpty.js";
-import { getErrMsg } from "../assert/get/getErrMsg.js";
+import { getRefiner } from "../index.js";
 import { isFn } from "../is/isFn.js";
 import { isObj } from "../is/isObj.js";
 import type { GetRelatedValidatorReturn, RelatedValidators, ValidatorFn } from "../types.js";
-import { getRefiner } from "../index.js";
+import { getErrMsg } from "../mgr/index.js";
 
 /**
  * TODO:

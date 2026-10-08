@@ -1,4 +1,4 @@
-import { INTERNAL_REGISTRY } from "$lib/mgr/index.js";
+import { INTERNAL_REGISTRY } from "../../mgr/index.js";
 import { isCoreValIden, type CoreValIden as ValIden } from "../../index.js";
 import { _INTERNAL_getIsValidator } from "../../is/getIsValidator.js";
 import type { ValidatorFn } from "../../types.js";

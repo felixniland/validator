@@ -1,67 +1,61 @@
 import { DEV } from "esm-env";
-import type { Compute, NonEmptyArr, NullOr, ReadonlyNonEmptyArr, ReverseMap } from "felixtypes";
+import type { Compute, NullOr, ReadonlyNonEmptyArr, ReverseMap } from "felixtypes";
 import { INTERNAL_getValidator } from "../internal/index.js";
 import { _INTERNAL_GET_IS_IDEN } from "../is/getIsValidator.js";
 import * as IS from "../is/index.js";
 import { isCoreValIden } from "../labels/index.js";
 import { INTERNAL_REGISTRY } from "../mgr/index.js";
-import { newPrimValidator } from "../prim/index.js";
 import type { GetValidatorReturn, ValidatorFn, ValIden } from "../types.js";
+
+/**
+ * TODO:
+    * []: "isRelatedRefiner" is commented out, since whenever I call it, there are protective generics in place anyway
+        *  i.e., "Match" and "Opt" both have complex generics that stop passing incorrect values to .eq, .refine,e tc
+        * but anyway, if I do want to complete it, here is the to-do:
+            * []: it has the BrandedTypes in the "object" Array, which is incorrect!
+    * []: I believe the 'load order issues' note below is incorrect... but anyway :)
+*/
 
 export {
     getRefiner
 };
-
-type FnIden = keyof typeof FN_IDEN_TO_VAL_IDEN;
 
 /** Map concatenated strings of multiple ValIden => a single function */
 const IDEN_GROUP_CACHE = new Map<string, (v: unknown) => v is unknown>();
 
 /** get 'allValidators' by removing 'mapHasKey', and then convert them to a Set */
 const FN_IDEN_TO_VAL_IDEN = reverseLookup(_INTERNAL_GET_IS_IDEN);
-const isFnIden = newPrimValidator(Object.keys(FN_IDEN_TO_VAL_IDEN) as NonEmptyArr<FnIden>);
-function assertFnIden(v: unknown): asserts v is FnIden {
-    if (isFnIden(v)) return;
-    throw new Error(`expected FnIden, received: ${v}`);
-}
 
 const VALIDATOR_TO_VAL_IDEN_MAP = new Map<ValidatorFn<any, any>, ValIden>();
 
 const { mapHasKey, ...rest} = IS;
 
 for (const [iden, validator] of Object.entries(rest)) {
-    assertFnIden(iden);
-    const valIden = FN_IDEN_TO_VAL_IDEN[iden];
+    // assertFnIden(iden);
+    const valIden = FN_IDEN_TO_VAL_IDEN[iden as keyof typeof FN_IDEN_TO_VAL_IDEN];
     VALIDATOR_TO_VAL_IDEN_MAP.set(validator, valIden);
 }
 
 /**
  * @returns ValIden | undefined, if the given fn maps DIRECTLY to a ValIden
  * 
- * i.e., it must be this lib's "isStr"; an equivalent fn will return 'undefined'
+ * i.e., it must be this lib's "isStr"; an equivalent "(v: unknown) => v is string" fn will return 'undefined'
  * @emits console.warn IN DEV if true, providing the ValIden
  * @usage to enable caching of requests with multiple validators, it is preferable to use the ValIden;
  * (functions are not cached, to avoid interfering with their garbage collection)
 */
 function validatorIsFromThisLib(fn: ValidatorFn<any, any>): ValIden | undefined {
-    // throw new Error("TODO - needs to check the Mgr as well");
-    const maybeIden = VALIDATOR_TO_VAL_IDEN_MAP.get(fn) satisfies ValIden | undefined;
-    if (maybeIden && DEV) console.warn(`the function for ValIden "${maybeIden}" was passed directly: prefer passing the ValIden to enable caching`);
+    /** first check the inbuilt map, then check the internal registry */
+    const maybeIden = (VALIDATOR_TO_VAL_IDEN_MAP.get(fn) ?? INTERNAL_REGISTRY.getRegisteredIdenForFn(fn)) satisfies ValIden | undefined;
+    if (maybeIden && DEV) console.warn(`the function for ValIden "${maybeIden}" was passed directly: prefer passing the ValIden to enable (/easier) caching`);
     return maybeIden;
 }
-
-/**
- * TODO: "isRelatedRefiner" validator fn - see notes below
-    * []: it has the BrandedTypes in the "object" Array, which is incorrect!
- * NTS: stopped exporting 'getRefiner', since inevitably wherever it's used - i.e., Match, Opt - there is typecasting anyway, so just using 'getRefiner' is fine :)
-*/
 
 /**
  * @param refiners spread array of (a) {@link CoreValIden} and/or (b) TypeGuard functions that take "v: unknown"
  * @returns a Typeguard function that amalgamates "refiners"
  * @throws if provided "refiners" is empty
  * @usage note the "Date" example above has the function annotated; TS by design does not infer typeguards, so providing that function without a return type will have it as "(o) => boolean" (and you will get an intellisense error from me)
- * see also {@link getRelatedRefiner}, which takes a type for "V", and only accepts ValIdens/Typeguards that narrow that type
  * @example 'getRefiner("str")' returns '(v: unknown) => v is string'
  * @example 'getRefiner((o): o is Date => o instance of Date))' returns '(o: unknown) => o is Date'
  * @example 'getRefiner("str", (o): o is Date => o instance of Date))' returns '(o: unknown) => o is string | Date'
@@ -183,7 +177,7 @@ function _getValidatorFromValIden(iden: ValIden): ValidatorFn<any, any> {
 // function getRelatedRefiner<const T>(v?: T) {
 //     return function provideRefiners<const RType extends T, const VType extends ReadonlyNonEmptyArr<RelatedValidators<T> | ValidatorFn<RType, T>>>(
 //         ...refiners: VType
-//     // @ts-expect-error(TODO: it is technically correct in that, e.g., "string does not extend Pokemon"; but in runtime, the value IS a Pokemon, and it's just loosely-typed as a "string", hence we are narrowing... so I'm not sure what the best practice is here)
+//     // @ts-expect-error(T ODO: it is technically correct in that, e.g., "string does not extend Pokemon"; but in runtime, the value IS a Pokemon, and it's just loosely-typed as a "string", hence we are narrowing... so I'm not sure what the best practice is here)
 //     ): (v: T) => v is GetRelatedValidatorReturn<T, RType, VType> {
 //         return getRefiner(...refiners as a ny);
 //     }

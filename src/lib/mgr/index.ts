@@ -3,22 +3,83 @@ import type { Getter, GetterOr } from "felixtypes";
 import { ValidatorConfig } from "../cfg/index.js";
 import { isCorePrettyValIden, isCoreValIden } from "../labels/index.js";
 import { PrimValidator } from "../prim/index.js";
-import type { PrettyValIden, ValIden } from "../types.js";
+import type { PrettyValIden, ValidatorFn, ValIden } from "../types.js";
 import type { NewValidatorParams, ParseValidatorParams, RegistedValIdenMapValue, RegisteredPrettyIden, RegisteredValIden, VALIDATOR_REGISTRY } from "./types.js";
 
 /**
  * TODO:
     * []: I could make the 'register' just take an Array<Prim...>, if I wanted, and it could just infer it
+    * []: docs for _V's 'Validator' interface
 */
 
 export {
     _V,
-    REGISTRY as INTERNAL_REGISTRY
+    getErrMsg,
+    REGISTRY as INTERNAL_REGISTRY,
 };
 
 export type {
     VALIDATOR_REGISTRY
 } from "./types.js";
+
+const VAL_IDEN_TO_PRETTY_MAP = {
+    str: 'string',
+    num: 'number',
+    compNum: 'comparable number',
+    digitStr: 'string composed only of digits',
+    bigint:"bigint",
+    bool: 'boolean',
+    arr: 'Array<unknown>',
+    obj: 'object',
+    arrStr: 'Array<string>',
+    arrNum: 'Array<number>',
+    arrArr: 'Array<Array<unknown>>',
+    arrBool: "Array<boolean>",
+    arrFn: "Array<Function>",
+    arrNull: "Array<null>",
+    arrObj: "Array<object>",
+    arrUndef: "Array<undefined>",
+    boolNum: "BoolNum(0 | 1)",
+    date: "Date",
+    dateStr: "a parsable date string",
+    err: "Error",
+    fn: "Function",
+    asyncFn: "Async Function",
+    map: "Map<unknown, unknown>",
+    null: "null",
+    promise: "Promise<unknown>",
+    regExp: "RegExp",
+    set: "Set<unknown>",
+    true: "true",
+    false: "false",
+    undef: "undefined",
+    weakMap: "WeakMap<WeakKey, unknown>",
+    weakSet: "WeakSet<WeakKey>",
+    el: "Element",
+    htmlEl: "HTML Element",
+    inputEl: "HTML Input Element",
+    formEl: "HTML Form Element",
+    contentEditable: "Content Editable Element",
+    node: "Node",
+    svelteMap: "SvelteMap<unknown, unknown>",
+    svelteSet: "SvelteSet<unknown>",
+    symbol: "symbol",
+    ul: "Unordered List Element",
+    ol: "Ordered List Element",
+    listEl: "(UL/OL) List Element",
+    listItem: "HTML LI Element",
+    blockEl: "Block Element",
+    headingEl: "Heading Element",
+    BR: "HTML BR Element",
+    emptyTextNode: "empty Text Node",
+    textNode: "Text Node",
+    span: "HTML Span Element",
+    v4UUID: "v4 UUID",
+    voidEl: "HTML Void Element",
+    nonEmpty: "Non-Empty Array",
+    nonNullable: "Non-nullable",
+    stringable: "Stringable",
+} as const satisfies Record<ValIden, PrettyValIden>;
 
 class REGISTRY {
     /** update the internal lists of idens, and their validators */
@@ -27,6 +88,9 @@ class REGISTRY {
         this.#regsteredIdenValidator.addPrim(iden);
         // @ts-expect-error("'addPrim' takes a type 'never', since nothing is registered")
         this.#regsteredPrettyIdenValidator.addPrim(pretty);
+
+        /** update the MAP to store the pretty :) */
+        Object.defineProperty(VAL_IDEN_TO_PRETTY_MAP, iden, { value: pretty });
     }
 
     static #regsteredIdenValidator = new PrimValidator<RegisteredValIden>();
@@ -37,67 +101,11 @@ class REGISTRY {
     /** for registered validators (i.e., NOT the inbuilt ones), the 'is' and 'assert' are stored here */
     static #validatorMap = new Map<RegisteredValIden, RegistedValIdenMapValue<VALIDATOR_REGISTRY[RegisteredValIden]["type"]>>();
     
-    // /** reverseMap used to find if the user has provided a fn, when they should've provided the Validator */
-    // static #reverseMap = new Map<RegistedValIdenMapValue<ValRegistry[RegisteredValIden]["type"]>, RegisteredValIden>();
+    /** reverseMap used to find if the user has provided a fn, when they should've provided the Validator */
+    static #fnToIdenMap = new Map<RegistedValIdenMapValue<VALIDATOR_REGISTRY[RegisteredValIden]>["is"], RegisteredValIden>();
 
-    static readonly VAL_IDEN_TO_PRETTY_MAP = ({
-        str: 'string',
-        num: 'number',
-        compNum: 'comparable number',
-        digitStr: 'string composed only of digits',
-        bigint:"bigint",
-        bool: 'boolean',
-        arr: 'Array<unknown>',
-        obj: 'object',
-        arrStr: 'Array<string>',
-        arrNum: 'Array<number>',
-        arrArr: 'Array<Array<unknown>>',
-        arrBool: "Array<boolean>",
-        arrFn: "Array<Function>",
-        arrNull: "Array<null>",
-        arrObj: "Array<object>",
-        arrUndef: "Array<undefined>",
-        boolNum: "BoolNum(0 | 1)",
-        date: "Date",
-        dateStr: "a parsable date string",
-        err: "Error",
-        fn: "Function",
-        asyncFn: "Async Function",
-        map: "Map<unknown, unknown>",
-        null: "null",
-        promise: "Promise<unknown>",
-        regExp: "RegExp",
-        set: "Set<unknown>",
-        true: "true",
-        false: "false",
-        undef: "undefined",
-        weakMap: "WeakMap<WeakKey, unknown>",
-        weakSet: "WeakSet<WeakKey>",
-        el: "Element",
-        htmlEl: "HTML Element",
-        inputEl: "HTML Input Element",
-        formEl: "HTML Form Element",
-        contentEditable: "Content Editable Element",
-        node: "Node",
-        svelteMap: "SvelteMap<unknown, unknown>",
-        svelteSet: "SvelteSet<unknown>",
-        symbol: "symbol",
-        ul: "Unordered List Element",
-        ol: "Ordered List Element",
-        listEl: "(UL/OL) List Element",
-        listItem: "HTML LI Element",
-        blockEl: "Block Element",
-        headingEl: "Heading Element",
-        BR: "HTML BR Element",
-        emptyTextNode: "empty Text Node",
-        textNode: "Text Node",
-        span: "HTML Span Element",
-        v4UUID: "v4 UUID",
-        voidEl: "HTML Void Element",
-        nonEmpty: "Non-Empty Array",
-        nonNullable: "Non-nullable",
-        stringable: "Stringable",
-    } as Record<ValIden, PrettyValIden>);
+    /** @returns the matching 'iden' for the given fn, which confirms it is a ValidatorFn that has already been registered */
+    static getRegisteredIdenForFn = (fn: ValidatorFn<any, any>): RegisteredValIden | undefined => this.#fnToIdenMap.get(fn as any);
 
     /**
      * @returns the config object to be registered 
@@ -138,7 +146,6 @@ class REGISTRY {
         } satisfies RegistedValIdenMapValue<TType>);
 
         this.#updateIdens(iden, pretty);
-        Object.defineProperty(this.VAL_IDEN_TO_PRETTY_MAP, iden, { value: pretty });
 
         return null as any;
     }
@@ -154,6 +161,7 @@ class REGISTRY {
          if (!fn) throw new Error(`expected 'ensurer' fn for ${iden}`);
          return fn;
      }
+
         // type Asserted = InferValidatedType<K>;
 
         // const entry = this.#validatorMap.get(iden);
@@ -175,10 +183,11 @@ class REGISTRY {
     private constructor() { throw new Error("this is static only!") }
 }
 
-/** @todo docs ;) */
 class ValidatorManager {
     static CFG = ValidatorConfig;
     static REG = REGISTRY;
+
+    static getPrettyIden = <T extends ValIden>(iden: T): typeof VAL_IDEN_TO_PRETTY_MAP[T] => VAL_IDEN_TO_PRETTY_MAP[iden];
 
     /** checks the core ValIden, and all registered ones */
     static isValIden = (v: unknown): v is ValIden => isCoreValIden(v) || this.REG.isRegisteredValIden(v);
@@ -189,12 +198,33 @@ class ValidatorManager {
     private constructor() { throw new Error("this is static only!") }
 }
 
+/**
+ * @param arr Array<ValIden | ValidatorFn<any>>
+ * @returns if arr contains any ValIden, returns `expected {valIdens.join(", or ")}}`
+ * @returns "asserter received incorrect type"
+ * @throws if provide an empty array
+*/
+function getErrMsg<const VType extends ReadonlyArray<ValIden | ValidatorFn<any>>>(...arr: VType): string {
+    if (!arr.length) throw new Error("ValidatorConfig.getErrMsg requires non-empty array");
+
+    const expectedTypes = (arr
+        .filter(_V.isValIden) as Array<ValIden>)
+        .map((iden) => _V.getPrettyIden(iden))
+        .join(", or ");
+
+    if (!expectedTypes.length) return ValidatorConfig.DEFAULT_ERR_MSG;
+    return `expected ${expectedTypes}`;
+}
+
+// NTS: identical to 'ValidatorManager', except for 'getErrMsg', which is only used internally
 interface Validator {
     /** set universal options for the validator */
     CFG: typeof ValidatorConfig;
 
     /** register, and retrieve, your own validated types */
     REG: typeof REGISTRY;
+
+    getPrettyIden: <T extends ValIden>(iden: T) => typeof VAL_IDEN_TO_PRETTY_MAP[T];
 
     /** checks the core ValIden, and all registered ones */
     isValIden: (v: unknown) => v is ValIden;

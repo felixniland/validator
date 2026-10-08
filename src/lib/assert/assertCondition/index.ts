@@ -1,23 +1,21 @@
 import type { GetterOr, NullOr } from "felixtypes";
-import { getRefiner } from "../../refine/index.js";
-import { getErrMsg } from "../get/getErrMsg.js";
-import type { GetValidatorReturn, ValidatorFn, CoreValIden } from "../../types.js";
 import { isCoreValIden } from "../../labels/index.js";
+import { getErrMsg, INTERNAL_REGISTRY } from "../../mgr/index.js";
+import { getRefiner } from "../../refine/index.js";
+import type { GetValidatorReturn, ValidatorFn, ValIden } from "../../types.js";
 
 /**
  * TODO:
-    * []: this does not properly use "_V", and so really only handles the 'CoreValIden'... soooo... fix that! :-p
-    * 
-    * []: it's awkward that you can't just give it a bool... so I'd like to improve that... hmmmm...
-        * e.g., from "utils/merge": ASSERT(obj, (o) => !isArr(o), "merge received an array. Incompatible. Can only merge POJOs");
-        * I can't just give it "!isArr(obj)" (i.e., false)
-    * []: I don't like how when you give it a condition, you call 'ASSERT(val, condition, errMsg)', whereas the others are 'ASSERT(val, errMsg, ...validators)'
-    * []: (is/assert)non-nullable: move them to the appropriate folders... but I don't think they should be part of the "ValIden", given that they require a generic... so I need to create handling for that
+    * the answer to these is: use a destructured array, with overloads, for the params, like how "ensure" does
+        * []: it's awkward that you can't just give it a bool... so I'd like to improve that... hmmmm...
+            * e.g., from "utils/merge": ASSERT(obj, (o) => !isArr(o), "merge received an array. Incompatible. Can only merge POJOs");
+            * I can't just give it "!isArr(obj)" (i.e., false)
+        * []: I don't like how when you give it a condition, you call 'ASSERT(val, condition, errMsg)', whereas the others are 'ASSERT(val, errMsg, ...validators)'
     * []: update "ASSER"'s overloads to error if not given a condition. Right now, neither of these generate intellisense errors:
         * ASSERT(someVal)
         * ASSERT(someVal, "custom error msg")
     * []: the runtime handling does not care if the errMsg is the second call to "ASSERT", it would be cool to make the function work that way too
- */
+*/
 
 export {
     ASSERT
@@ -29,9 +27,9 @@ export {
 function ASSERT<T>(v: unknown, ...refiners: Array<ValidatorFn<T, any>>): asserts v is T;
 function ASSERT<T>(v: unknown, errMsg: string, refiners: ValidatorFn<T, any>): asserts v is T;
 function ASSERT<T>(v: unknown, condition: GetterOr<boolean, unknown>, errMsg?: string): asserts v is T;
-function ASSERT<VType extends ReadonlyArray<CoreValIden | ValidatorFn<any, unknown>>>(v: unknown, ...refiners: VType): asserts v is GetValidatorReturn<VType[number]>;
-function ASSERT<VType extends ReadonlyArray<CoreValIden | ValidatorFn<any, unknown>>>(v: unknown, errMsg: string, ...refiners: VType): asserts v is GetValidatorReturn<VType[number]>;
-function ASSERT<VType extends ReadonlyArray<CoreValIden | ValidatorFn<any, unknown>>>(v: unknown, ...errMsgAndOrRefiners: VType): asserts v is GetValidatorReturn<VType[number]>;
+function ASSERT<VType extends ReadonlyArray<ValIden | ValidatorFn<any, unknown>>>(v: unknown, ...refiners: VType): asserts v is GetValidatorReturn<VType[number]>;
+function ASSERT<VType extends ReadonlyArray<ValIden | ValidatorFn<any, unknown>>>(v: unknown, errMsg: string, ...refiners: VType): asserts v is GetValidatorReturn<VType[number]>;
+function ASSERT<VType extends ReadonlyArray<ValIden | ValidatorFn<any, unknown>>>(v: unknown, ...errMsgAndOrRefiners: VType): asserts v is GetValidatorReturn<VType[number]>;
 /**
  * Asserts that a value meets at least one of the provided conditions.
  *
@@ -39,7 +37,7 @@ function ASSERT<VType extends ReadonlyArray<CoreValIden | ValidatorFn<any, unkno
  * @param errMsg - to include a custom error message string, it must be the SECOND argument
  * @param errMsg - if no custom message is provided, and 1+ ValIden are provided, they generate the default errorMessage: `expected {valIdens.join(", or")}}`
  * @param errMsg - if no ValIdens are provided, default is: "asserter received incorrect type"
- * @param conditions boolean | (v?: typeof v) => boolean | {@link CoreValIden} | Typeguard
+ * @param conditions boolean | (v?: typeof v) => boolean | {@link ValIden} | Typeguard
  * @throws error when no condition is met
  * @throws error when no conditions are received
  *
@@ -55,7 +53,7 @@ function ASSERT<T>(
     v: unknown,
     errMsgOrRefiner?: string | GetterOr<boolean, unknown> | ValidatorFn<any, unknown>,
     errMsg?: string | ValidatorFn<any, unknown>,
-    ...extraRefiners: Array<CoreValIden | ValidatorFn<any, unknown>>
+    ...extraRefiners: Array<ValIden | ValidatorFn<any, unknown>>
 ): asserts v is T {
     /** was a validator of some sort provided? */
     let sawValidator: boolean = false;
@@ -84,8 +82,14 @@ function ASSERT<T>(
         switch(true) {
             case (typeof entry === "string"):
                 /** isValIden ? push the resolved refiner to the end of the array : set it as the customErrMsg */
-                if (isCoreValIden(entry)) combined.push(getRefiner(entry));
-                else updateCustomErrMsg(entry);
+                if (isCoreValIden(entry)) {
+                    combined.push(getRefiner(entry));
+                } else if (INTERNAL_REGISTRY.isRegisteredValIden(entry)) {
+                    combined.push(INTERNAL_REGISTRY.getValidator(entry));
+                } else {
+                    updateCustomErrMsg(entry);
+                }
+
                 continue loopDeLoop;
             
             case (typeof entry === "boolean"):

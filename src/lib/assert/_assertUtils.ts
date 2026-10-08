@@ -1,22 +1,22 @@
-import { _V } from "../mgr/index.js";
 import type { AutoCompleteStr as DefaultMsg } from "felixtypes";
 import { _INTERNAL_getIsValidator } from "../is/getIsValidator.js";
+import { _V } from "../mgr/index.js";
 import type { CoreValIden, InferValidatedType, ValIden } from "../types.js";
 
 export {
-    getStdAsserter as _getStdAsserter,
-    getExpectedMsg as _getExpectedMsg
+    getExpectedMsg as _getExpectedMsg,
+    getStdAsserter as _getStdAsserter
 };
 
 export type {
     GetExpectedMsg as _INTERNAL_GetExpectedMsg
-}
+};
 
 type GetExpectedMsg<TIden extends ValIden> = ReturnType<typeof getExpectedMsg<TIden>>;
 
 function getExpectedMsg<const TIden extends ValIden>(iden: TIden) {
     // if (isCoreValIden(iden)) return `expected ${CORE_VAL_IDEN_TO_PRETTY_MAP[iden]}` as const;
-    return `expected ${_V.REG.VAL_IDEN_TO_PRETTY_MAP[iden]} as const`;
+    return `expected ${_V.getPrettyIden(iden)} as const`;
 }
 
 function getStdAsserter<const K extends CoreValIden>(type: K) {

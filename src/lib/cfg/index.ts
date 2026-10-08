@@ -1,17 +1,23 @@
-
-/**
- * TODO:
-    * "WIP" on the 'registerValidator...' stuff
-        * []: I need to actually pull it out of 'felixtypes', and into here...
-            * ... OR, add the declaration omdule into 'felixtypes', and then the user just needs to still add it to this Config, but that feels convulted...
-*/
+import type { ValIden } from "../types.js";
 
 export {
     ValidatorConfig
 };
 
-
 class ValidatorConfig {
+    /**
+     * this is the errMsg thrown when a better one cannot be computed
+     * 
+     * in-built asserters and those provided to _V.REG have a pretty name, or default to their known name, and will throw that: e.g., str: "expected string", arrNum: "expected Array<number>"
+     * 
+     * asserters that take multiple conditions will concatenate using the same logic, e.g., ensure("str", "arrNum") would throw "expected string, or Array<number>"
+     * 
+     * if one such asserter does not receive {@link ValIden}, it will throw this DEFAULT_ERR_MSG
+     * @default 'asserter received incorrect type'
+     * @usage note that due to caching, changing this after an asserter has been created may not update that throw; i.e., set this FIRST!
+    */
+    static DEFAULT_ERR_MSG: string = "asserter received incorrect type";
+
     /**
      * should 'vacuous logic' be allowed; i.e., statements that can't be logically tested because the given data is 'empty'
      * @todo I should copy in a better, formal definition XD

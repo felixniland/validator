@@ -4,12 +4,14 @@ import { CORE_VAL_IDEN_TO_PRETTY_MAP } from "./labels/index.js";
 import type { VALIDATOR_REGISTRY } from "./mgr/index.js";
 
 /**
- * TODO from felixTypes...:
-    * []: 16/01: changed the final line in "GetRelatedValidatorReturn"
-        * PREV: = WithInput_GetValidatorReturn<T, VType[number]> extends T ? WithInput_GetValidatorReturn<T, VType[number]> : never
-        * NEW: WithInput_GetValidatorReturn<T, VType[number]>
-        * what would happen is, when a refiner was used that was broader than the type that triggered it - e.g., "KeyStr" was given "str" => the return type would be "NEVER", since "str (i.e., string)" doesn't extend KeyStr... except, like, it does lol
-        * so the idea is that as long as the "RelatedValidators" is accurate, this is accurate too
+ * TODO:
+    * []: "WithInput_GetRelatedValidatorReturn" needs to maintain 'object' type, the way it retains 'arr', 'set', etc...
+    * []: TODOs from felixTypes...:
+        * 16/01: changed the final line in "GetRelatedValidatorReturn"
+            * PREV: = WithInput_GetValidatorReturn<T, VType[number]> extends T ? WithInput_GetValidatorReturn<T, VType[number]> : never
+            * NEW: WithInput_GetValidatorReturn<T, VType[number]>
+            * what would happen is, when a refiner was used that was broader than the type that triggered it - e.g., "KeyStr" was given "str" => the return type would be "NEVER", since "str (i.e., string)" doesn't extend KeyStr... except, like, it does lol
+            * so the idea is that as long as the "RelatedValidators" is accurate, this is accurate too
  */
 
 export type {
